@@ -193,7 +193,12 @@ function layout() {
     Object.assign(LY, { k, ax, ground: VH * .8, cx: ax });
   }
   Object.assign(holo.style, { width: holoR.w + "px", height: holoR.h + "px" });
-  holoIn.style.setProperty("--s", Math.min(holoR.w / DW, holoR.h / DH).toFixed(3));
+  // Con muy poco alto (la pantalla quedaría con escala menor a 0,65), cada pantalla muestra solo su dato
+  // principal, en una caja del tamaño real (escala 1).
+  const mini = ph && Math.min(holoR.w / DW, holoR.h / DH) < .65;
+  holo.classList.toggle("mini", mini);
+  holoIn.style.setProperty("--dw", (mini ? holoR.w : DW) + "px"); holoIn.style.setProperty("--dh", (mini ? holoR.h : DH) + "px");
+  holoIn.style.setProperty("--s", mini ? "1" : Math.min(holoR.w / DW, holoR.h / DH).toFixed(3));
   // En el teléfono, la barra del recorrido es una guía: fuera del Tab (están el contador, deslizar y "Seguir").
   for (const a of document.querySelectorAll(".rail a")) ph ? a.setAttribute("tabindex", "-1") : a.removeAttribute("tabindex");
   const c = camFor(S.cur); cam.x.t = c.x; cam.y.t = c.y; cam.z.t = c.z;

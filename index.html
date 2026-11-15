@@ -302,6 +302,43 @@ a { color: inherit; }
 #holo.ph .s7 .spots .av { width: 40px; height: 40px; }
 #holo.ph .s11 .grid { grid-template-columns: repeat(5, 1fr); }
 
+/* Teléfonos muy bajos (la pantalla quedaría con escala menor a 0,65): cada pantalla muestra solo su dato
+   principal, grande, en una fila, con la caja del dibujo del tamaño real de la pantalla (escala 1). */
+#holo.mini .scr { flex-direction: row; align-items: center; justify-content: center; gap: 14px; padding: 8px; }
+#holo.mini .scr > .sh { display: none !important; }
+#holo.mini .s1 > :not(.me):not(.net), #holo.mini .s1 .me > div, #holo.mini .s1 .net > svg, #holo.mini .s1 .trav { display: none !important; }
+#holo.mini .s1 .net { width: auto; height: auto; margin: 0; transform: none; display: flex; gap: 10px; }
+#holo.mini .s1 .node { position: static; transform: none; }
+#holo.mini .s2 > :not(.qr-box):not(.cap) { display: none !important; }
+#holo.mini .s2 .qr-box { width: 76px; height: 76px; flex: none; }
+#holo.mini .s2 .qr-card { width: 50px; height: 50px; padding: 4px; border-radius: 8px; }
+#holo.mini .s2 .cap { display: block; max-width: 170px; text-align: left; font-size: 14px; }
+#holo.mini .s3 > :not(.sug) { display: none !important; }
+#holo.mini .s3 .sug { flex: 1; max-width: 300px; }
+#holo.mini .s4 .shelf { height: auto; padding: 0; }
+#holo.mini .s4 .shelf::after, #holo.mini .s4 .rays, #holo.mini .s4 .tro:not(.new), #holo.mini .s4 .story::before, #holo.mini .s4 .story span:not(:last-child) { display: none !important; }
+#holo.mini .s4 .tro.new { width: 52px; }
+#holo.mini .s4 .story { margin: 0; }
+#holo.mini .s4 .story span:last-child { font-size: 22px; }
+#holo.mini .s5 > :not(.chart):not(.verdict) { display: none !important; }
+#holo.mini .s5 svg.chart { width: 130px; height: 72px; flex: none; }
+#holo.mini .s6 > :not(.streak) { display: none !important; }
+#holo.mini .s7 > :not(.wait):not(.tbtn) { display: none !important; }
+#holo.mini .s7 .wait { flex: 1; max-width: 210px; }
+#holo.mini .s7 .wait b { white-space: nowrap; }
+#holo.mini .s7 .tbtn { width: 120px; flex: none; }
+#holo.mini .s8 > :not(.stories):not(.post), #holo.mini .s8 .stories .av:nth-child(n+4), #holo.mini .s8 .post > .av { display: none !important; }
+#holo.mini .s8 .post { padding: 8px 10px; }
+#holo.mini .s9 > :not(.lock) { display: none !important; }
+#holo.mini .s9 .lock { position: static; transform: none; display: flex; align-items: center; gap: 12px; }
+#holo.mini .s10 > .side, #holo.mini .s10 .main > .big, #holo.mini .s10 .main > .row:nth-child(3), #holo.mini .s10 .row .ln { display: none !important; }
+#holo.mini .s10 .main { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+#holo.mini .s10 .row { padding: 4px; gap: 6px; }
+#holo.mini .s10 .row .av { width: 24px; height: 24px; font-size: 12px; }
+#holo.mini .s11 > :not(.grid), #holo.mini .s11 .grid > :nth-child(n+2):nth-child(-n+4), #holo.mini .s11 .grid > :nth-child(n+8) { display: none !important; }
+#holo.mini .s11 .grid { grid-template-columns: repeat(4, 62px); }
+#holo.mini .pill, #holo.mini .s10 .tag, #holo.mini .s8 .fz em, #holo.mini .s11 .nw em, #holo.mini .mut, #holo.mini .s1 .node { font-size: 12px; }
+
 /* ── Arriba: la marca y el recorrido ───────────────────────────────────────── */
 .top { position: fixed; z-index: 20; left: 0; right: 0; top: 0; height: calc(var(--head) + env(safe-area-inset-top)); padding: env(safe-area-inset-top) max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left)); display: flex; align-items: center; gap: 12px; background: linear-gradient(180deg, rgb(7 6 11 / .85), rgb(7 6 11 / 0)); }
 .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; }
@@ -835,6 +872,6 @@ main { position: relative; z-index: 10; }
   </ol>
 </nav>
 
-<script src="/app.js?v=839922e5" defer></script>
+<script src="/app.js?v=00585f35" defer></script>
 </body>
 </html>
