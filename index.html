@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Go-Gyms · Muy pronto</title>
+<meta name="author" content="DiMonkey">
 <meta name="description" content="La app para la gente que entrena y para los gyms: una sola cuenta para todos tus gyms, pase con QR, entrenos, récords, metas y clases. Muy pronto.">
 <meta name="theme-color" content="#07060b">
 <meta name="color-scheme" content="dark">
@@ -403,6 +404,8 @@ main { position: relative; z-index: 10; }
 .again { color: var(--teal); font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
 .again:hover { text-decoration: underline; text-underline-offset: 4px; }
 .foot { position: absolute; left: calc(var(--fx) + var(--fw) * .06); bottom: max(18px, env(safe-area-inset-bottom)); margin: 0; font-size: 12.5px; color: var(--muted); }
+.foot a { color: var(--ink2); text-decoration: underline; text-decoration-color: rgb(255 255 255 / .25); text-underline-offset: 3px; pointer-events: auto; }
+.foot a:hover, .foot a:focus-visible { color: var(--ink); text-decoration-color: currentColor; }
 
 /* El Enlace en neón (enlace-link.tsx, neon) y su gesto: los anillos llegan, el guion los une y un destello lo cierra. */
 .fin.on .lk-l { animation: lkL .75s var(--out) .5s both, flk 2.6s steps(1) 1.4s; }
@@ -851,7 +854,7 @@ main { position: relative; z-index: 10; }
       <div class="share"><p>¿Tu gym todavía no está? Pasale esta página.</p><button type="button" class="share-b" id="shareB"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Compartir</button><span class="share-ok" id="shareOk" role="status" aria-live="polite"></span></div>
       <div class="acts"><a class="again" href="#c0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>Ver otra vez</a></div>
     </div>
-    <p class="foot">© 2026 Go-Gyms</p>
+    <p class="foot">© 2026 Go-Gyms · <a href="https://www.dimonkey.com/" target="_blank" rel="noopener">Un producto de DiMonkey</a></p>
   </section>
 </main>
 <nav class="rail" aria-label="Paradas del recorrido">
