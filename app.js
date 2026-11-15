@@ -195,7 +195,7 @@ function layout() {
   Object.assign(holo.style, { width: holoR.w + "px", height: holoR.h + "px" });
   // Con muy poco alto (la pantalla quedaría con escala menor a 0,65), cada pantalla muestra solo su dato
   // principal, en una caja del tamaño real (escala 1).
-  const mini = ph && Math.min(holoR.w / DW, holoR.h / DH) < .65;
+  const mini = ph && Math.min(holoR.w / DW, holoR.h / DH) < .8;
   holo.classList.toggle("mini", mini);
   holoIn.style.setProperty("--dw", (mini ? holoR.w : DW) + "px"); holoIn.style.setProperty("--dh", (mini ? holoR.h : DH) + "px");
   holoIn.style.setProperty("--s", mini ? "1" : Math.min(holoR.w / DW, holoR.h / DH).toFixed(3));
