@@ -172,14 +172,15 @@ function layout() {
   // La caja del dibujo de las pantallas: en el teléfono, más ancha y más baja (cada una guarda una línea secundaria).
   const DW = ph ? 340 : 300, DH = ph ? 290 : 380;
   if (ph) {
-    // La pantalla arriba, a todo el ancho; Gogo abajo a la izquierda, con 24 px de aire hasta la pantalla y lugar
-    // para su globo al costado. Gogo se achica antes que la letra de la pantalla.
-    const top = 70, ground = Math.round(Math.max(VH * .52, VH - (VW < 380 ? 300 : 340)));
-    const k = clamp(Math.min(VW * .0027, (ground - top - DH - 24) / 132), .6, 1.05);
+    // La escena va entera arriba del texto: se mide dónde empieza el texto de cada parada (con la altura que de
+    // verdad se ve, la de la sección: las barras del navegador incluidas) y su degradé de 44 px. La pantalla
+    // arriba, a todo el ancho; Gogo abajo, con 24 px de aire. Si no entra, se achican Gogo y la pantalla.
+    LY.tops = sections.map((sec) => sec.querySelector(".ch-in").getBoundingClientRect().top - sec.getBoundingClientRect().top);
+    const top = 66, B = Math.min(...LY.tops.slice(1, 12)) - 50;
+    const k = clamp(Math.min(VW * .0027, (B - top - DH - 24) / 132), .5, 1.05);
     const ax = Math.round(Math.max(16 + 68 * k, VW * .3));
-    const h = Math.round(ground - 132 * k - 24 - top);
-    Object.assign(LY, { k, ax, ground, cx: VW / 2 });
-    holoR = { x: 14, y: top, w: VW - 28, h };
+    Object.assign(LY, { k, ax, ground: B, cx: VW / 2 });
+    holoR = { x: 14, y: top, w: VW - 28, h: Math.max(90, Math.round(B - 132 * k - 24 - top)) };
   } else {
     // En pantallas muy anchas, la escena va en un marco de 1680 px centrado.
     const FW = Math.min(VW, 1680), FX = (VW - FW) / 2;
@@ -195,6 +196,7 @@ function layout() {
   holoIn.style.setProperty("--s", Math.min(holoR.w / DW, holoR.h / DH).toFixed(3));
   // En el teléfono, la barra del recorrido es una guía: fuera del Tab (están el contador, deslizar y "Seguir").
   for (const a of document.querySelectorAll(".rail a")) ph ? a.setAttribute("tabindex", "-1") : a.removeAttribute("tabindex");
+  const c = camFor(S.cur); cam.x.t = c.x; cam.y.t = c.y; cam.z.t = c.z;
 }
 function resize() {
   layout();
@@ -482,18 +484,37 @@ function clearTimers() { timers.forEach(clearTimeout); timers = []; }
 // Dónde está la cámara y dónde va Gogo en cada parada (en la sala).
 function tourCamX() { return (LY.cx - LY.ax) / LY.k; }
 function camFor(i) {
-  if (i === 0) return { x: 0, y: 0, z: phone() ? 40 : 24 };
+  const F0 = LY.k * GZ, Cy0b = LY.ground - 150 * LY.k;
+  if (i === 0) {
+    if (!phone() || !LY.tops) return { x: 0, y: 0, z: phone() ? 40 : 24 };
+    // Teléfono: Gogo grande, centrado y entero arriba del texto, con la lámpara y el neón encima.
+    const B0 = LY.tops[0] - 50, gh = clamp((B0 - 66) / 2.25, 60, VW * .5), s0 = gh / 124;
+    return { x: 0, y: 150 - (B0 - Cy0b) / s0, z: GZ - F0 / s0 };
+  }
   if (i === 12) {
-    const z = 180, sw = LY.k * GZ / (WALL - z);
+    const z = 180, sw = F0 / (WALL - z);
     const target = phone() ? VW * .5 : VW * .6;
-    // En el teléfono, el texto del final es más alto: la escena sube para que la puerta y Gogo queden a la vista.
-    return { x: -260 - (target - LY.cx) / sw, y: phone() ? 150 : 0, z };
+    if (!phone() || !LY.tops) return { x: -260 - (target - LY.cx) / sw, y: 0, z };
+    // Teléfono: la puerta y Gogo llenan el lugar que deja el texto del final: los pies de Gogo justo antes
+    // del degradé y el marco de la puerta cerca de la barra de arriba (se busca el acercamiento que lo cumple).
+    const B12 = LY.tops[12] - 50;
+    let best = null;
+    for (let zz = 600; zz >= -900; zz -= 10) {
+      const y = 150 - (B12 - Cy0b) * (760 - zz) / F0, doorTop = Cy0b + (-262 + 150 - y) * F0 / (WALL - zz);
+      // Gogo entero en la pantalla y no más de 1,4 veces su tamaño de siempre.
+      const sG = F0 / (760 - zz), camX0 = -260 - (target - LY.cx) / (F0 / (WALL - zz)), gRight = LY.cx + (-150 - camX0) * sG + 70 * sG;
+      if (gRight > VW - 8 || sG > LY.k * 1.4) continue;
+      const d = Math.abs(doorTop - 84);
+      if (!best || d < best.d) best = { d, y, z: zz };
+    }
+    if (!best) best = { y: 150 - (B12 - Cy0b) * 580 / F0, z: 180 };
+    return { x: -260 - (target - LY.cx) / (F0 / (WALL - best.z)), y: best.y, z: best.z };
   }
   return { x: tourCamX(), y: 0, z: 0 };
 }
 function gogoAt(i) {
   if (i === 10) {
-    const c = camFor(10), wz = phone() ? 400 : 340, s = LY.k * GZ / (wz - c.z);
+    const c = camFor(10), wz = phone() ? GZ : 340, s = LY.k * GZ / (wz - c.z);
     return { wx: c.x + (holoR.x + holoR.w * .5 - LY.cx) / s, wz };
   }
   if (i === 12) return { wx: -150, wz: 760 };
@@ -1306,15 +1327,26 @@ function bubbleAt() {
   const s = LY.k * GZ / Math.max(sp.wz.x - cam.z.x, 4);
   const gx = LY.cx + (sp.wx.x - cam.x.x) * s, top = LY.ground - 150 * LY.k + (150 - cam.y.x) * s - 124 * s;
   let x, y, flip = false;
-  const side = phone() && holoOn;
+  const side = phone();
   // Al costado de la cabeza, el ancho es el que queda hasta el borde (nunca se da vuelta sobre su cara).
   // En la parada 4, después de los discos de la barra (no se pisan).
   const sideX = gx + (S.cur === 4 ? 100 : 58) * s + 4;
-  bub.style.maxWidth = side ? Math.max(140, Math.round(VW - 10 - sideX)) + "px" : "";
+  bub.style.maxWidth = side ? Math.max(120, Math.round(VW - 10 - sideX)) + "px" : "";
   let bw = bub.offsetWidth, bh = bub.offsetHeight;
   if (side) {
-    x = Math.min(sideX, VW - 10 - bw);
-    y = clamp(Math.max(top - 6, holoR.y + holoR.h + 8), 74, VH - bh - 8);
+    const tt = (LY.tops ? LY.tops[S.cur] : VH) - 50, face = { x: gx - 42 * s, r: gx + 42 * s, y: top + 26 * s, b: top + 92 * s }; // los ojos y la boca
+    const hits = (bx, by, w2, h2) => bx < face.r && bx + w2 > face.x && by < face.b && by + h2 > face.y;
+    const room = VW - 10 - sideX;
+    bub.style.maxWidth = room >= 120 ? Math.round(room) + "px" : "";
+    bw = bub.offsetWidth; bh = bub.offsetHeight;
+    const yHead = Math.max(70, Math.min(Math.max(top - 6, holoOn ? holoR.y + holoR.h + 8 : 70), tt - bh));
+    const cands = [
+      room >= 120 ? [Math.min(sideX, VW - 10 - bw), yHead] : null,                                   // a la derecha de la cabeza
+      [clamp(gx - bw * .5, 10, VW - 10 - bw), Math.max(70, Math.min(top - bh - 10, tt - bh))],         // arriba
+      [Math.max(10, gx - 64 * s - 6 - bw), yHead],                                                    // a la izquierda
+    ].filter(Boolean);
+    [x, y] = cands.find(([cx2, cy2]) => !hits(cx2, cy2, bw, bh)) || cands[0];
+    flip = x + bw < gx;
   } else {
     // Arriba de la cabeza, con aire para los saltos; nunca sobre la pantalla ni sobre la columna de texto.
     const right = holoOn ? holoR.x - 8 : VW - 10;
@@ -1362,6 +1394,8 @@ addEventListener("resize", () => {
   // En el teléfono, la barra del navegador cambia el alto al hacer scroll: solo se rehace si cambia el ancho.
   rzT = setTimeout(() => { if (innerWidth === lastW && phone()) { layout(); kick(); return; } lastW = innerWidth; resize(); seedDust(); }, 120);
 });
+window.visualViewport?.addEventListener("resize", () => { if (phone()) { clearTimeout(rzT); rzT = setTimeout(() => { layout(); kick(); }, 120); } });
+document.fonts?.ready.then(() => { layout(); kick(); });
 document.addEventListener("visibilitychange", () => { running = !document.hidden; if (running) kick(); });
 mq.addEventListener?.("change", (e) => { RM = e.matches; enterChapter(S.cur); kick(); });
 
