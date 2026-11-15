@@ -16,3 +16,12 @@ python3 -m http.server 4173
 ```
 
 y abrir http://localhost:4173.
+
+## Versión de `app.js`
+
+`index.html` carga `app.js?v=<hash>`: así los navegadores que ya lo tenían guardado bajan el nuevo. La versión la
+pone `scripts/version.sh`. Para que corra solo antes de cada commit, instalá el hook una vez:
+
+```sh
+printf '#!/bin/sh\nsh scripts/version.sh >/dev/null && git add index.html\n' > .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+```
