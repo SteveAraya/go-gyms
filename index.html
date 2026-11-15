@@ -1,28 +1,830 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Go-Gyms · Muy pronto</title>
-  <meta name="description" content="Go-Gyms: muy pronto.">
-  <meta name="theme-color" content="#07060b">
-  <style>
-    :root { color-scheme: dark; }
-    * { margin: 0; box-sizing: border-box; }
-    body {
-      min-height: 100dvh; display: grid; place-items: center; padding: 24px;
-      background: radial-gradient(60% 50% at 50% 35%, #2a1f4a 0%, #07060b 70%);
-      color: #f4f2ff; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; text-align: center;
-    }
-    h1 { font-size: clamp(2.5rem, 9vw, 5rem); letter-spacing: 0.02em; line-height: 1; }
-    h1 span { color: #ff4d6d; }
-    p { margin-top: 16px; font-size: clamp(1rem, 3.5vw, 1.25rem); color: #b9b3d9; letter-spacing: 0.3em; text-transform: uppercase; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Go-Gyms · Muy pronto</title>
+<meta name="description" content="La app para la gente que entrena y para los gyms: una sola cuenta para todos tus gyms, pase con QR, entrenos, récords, metas y clases. Muy pronto.">
+<meta name="theme-color" content="#07060b">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Go-Gyms">
+<meta property="og:locale" content="es_LA">
+<meta property="og:title" content="Go-Gyms · Muy pronto">
+<meta property="og:description" content="Gogo, la mascota de Go-Gyms, ya prendió las luces: una sola cuenta para todos tus gyms y mucho más que todavía guarda bajo llave.">
+<meta property="og:url" content="https://www.go-gyms.com/">
+<meta property="og:image" content="https://www.go-gyms.com/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Gogo, la mascota de Go-Gyms, con vincha y la remera de su gym, junto a una puerta entreabierta con luz. Texto: Muy pronto. Go-Gyms, la app para la gente que entrena y para los gyms.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Go-Gyms · Muy pronto">
+<meta name="twitter:description" content="Gogo, la mascota de Go-Gyms, ya prendió las luces: una sola cuenta para todos tus gyms y mucho más que todavía guarda bajo llave.">
+<meta name="twitter:image" content="https://www.go-gyms.com/og.jpg">
+<link rel="canonical" href="https://www.go-gyms.com/">
+<link rel="preload" href="/fonts/barlow-condensed-900.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: "Barlow Condensed"; font-weight: 800; font-style: normal; font-display: swap; src: url(/fonts/barlow-condensed-800.woff2) format("woff2"); }
+@font-face { font-family: "Barlow Condensed"; font-weight: 900; font-style: normal; font-display: swap; src: url(/fonts/barlow-condensed-900.woff2) format("woff2"); }
+@font-face { font-family: "Space Grotesk"; font-weight: 400 700; font-style: normal; font-display: swap; src: url(/fonts/space-grotesk.woff2) format("woff2"); }
+@font-face { font-family: "Outfit"; font-weight: 700; font-style: normal; font-display: swap; src: url(/fonts/outfit-wordmark.woff2) format("woff2"); unicode-range: U+2D, U+47, U+6D, U+6F, U+73, U+79; }
+
+/* Los tokens de la app (gogyms_fe/src/app/globals.css): el teal solo para lo que se toca; lo decorativo en celeste, violeta y ámbar. */
+:root {
+  --page: #07060b; --surface: #100e18; --raised: #1f1a33; --ink: #f4f2ff; --ink2: #b4afd0; --muted: #8a86a6; --grid: #211d33;
+  --violet: #9b5de5; --teal: #3dd6cb; --red: #f53756; --deco: #7cc4ff; --gold: #f5b83d; --lav: #c9a8ff;
+  --good: #84e35e; --warning: #f5b83d; --critical: #ff5470;
+  --display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --spring: cubic-bezier(.34, 1.56, .64, 1); --out: cubic-bezier(.16, 1, .3, 1);
+  --head: 56px;
+  /* El marco de la escena: en pantallas muy anchas, texto, Gogo y pantalla van juntos en 1680 px centrados. */
+  --fw: min(100vw, 1680px); --fx: max(0px, (100vw - 1680px) / 2);
+  --r-card: 16px; --r-row: 12px; --r-bar: 6px;
+}
+* { box-sizing: border-box; }
+html { background: var(--page); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; scroll-snap-type: y mandatory; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { margin: 0; overscroll-behavior-y: none; }
+a { color: inherit; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.d { font-family: var(--display); font-weight: 900; text-transform: uppercase; line-height: .9; letter-spacing: .005em; }
+:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; border-radius: 10px; }
+.ch:focus, .ch:focus-visible { outline: none; }
+
+/* ── La escena: la sala (dos lienzos), la pantalla holográfica y Gogo ─────────── */
+.stage { position: fixed; inset: 0 0 auto 0; height: 100vh; height: 100lvh; pointer-events: none; }
+#back, #front { position: fixed; left: 0; top: 0; width: 100%; height: 100vh; height: 100lvh; display: block; }
+#back { z-index: 1; }
+#front { z-index: 4; }
+#gogoWrap { position: fixed; left: 0; top: 0; z-index: 3; transform-origin: 0 0; visibility: hidden; }
+#gogoWrap svg { display: block; overflow: visible; }
+#gogoHit { position: fixed; z-index: 12; width: 10px; height: 10px; border-radius: 50%; pointer-events: auto; cursor: pointer; background: none; border: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+#gogoHit:not(.on) { display: none; }
+.skip { position: fixed; z-index: 50; left: 16px; top: 12px; padding: 12px 18px; border-radius: 999px; background: var(--teal); color: #062523; font-weight: 700; text-decoration: none; translate: 0 -200%; }
+.skip:focus { translate: 0 0; }
+.lit-fallback { position: fixed; inset: 0; z-index: 0; background: radial-gradient(90% 60% at 50% 30%, #1d1830, var(--page) 70%); }
+#probe { position: fixed; top: 0; height: 100vh; height: 100lvh; width: 0; visibility: hidden; }
+
+#bubble { position: fixed; left: 0; top: 0; z-index: 14; max-width: clamp(250px, 14vw, 340px); width: max-content; font: 600 clamp(15px, .8vw, 19px)/1.4 var(--sans); color: var(--ink); background: rgb(20 16 34 / .94); border: 1px solid rgb(255 255 255 / .16); padding: 10px 14px; border-radius: 18px 18px 18px 6px; box-shadow: 0 10px 30px rgb(0 0 0 / .4); opacity: 0; transition: opacity .25s ease; pointer-events: none; }
+#bubble.on { opacity: 1; pointer-events: auto; cursor: pointer; }
+#bubble.flip { border-radius: 18px 18px 6px 18px; }
+#bubble.pinned { border-color: rgb(124 196 255 / .45); }
+
+/* La pantalla holográfica: lo que Gogo proyecta en la sala. */
+#holo { position: fixed; left: 0; top: 0; z-index: 2; pointer-events: none; opacity: 0; transform-origin: 50% 100%; }
+#holo.on { opacity: 1; }
+.holo-frame { position: absolute; inset: 0; border-radius: 26px; overflow: hidden; background: linear-gradient(180deg, rgb(26 21 46 / .94), rgb(11 9 21 / .95)); border: 1px solid rgb(201 168 255 / .28); box-shadow: inset 0 1px 0 rgb(255 255 255 / .08), 0 30px 80px rgb(0 0 0 / .55), 0 0 70px rgb(155 93 229 / .22), 0 0 0 6px rgb(124 196 255 / .035); }
+.holo-frame::before { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 60% at 50% 0%, rgb(155 93 229 / .2), transparent 60%), repeating-linear-gradient(0deg, rgb(255 255 255 / .022) 0 1px, transparent 1px 4px); pointer-events: none; z-index: 2; }
+.holo-frame::after { content: ""; position: absolute; left: 0; right: 0; height: 30%; top: -30%; background: linear-gradient(180deg, transparent, rgb(124 196 255 / .07), transparent); z-index: 3; animation: sheen 5.5s linear infinite; }
+@keyframes sheen { to { top: 130%; } }
+.holo-edge { position: absolute; inset: -1px; border-radius: 27px; padding: 1px; background: linear-gradient(140deg, rgb(155 93 229 / .9), rgb(124 196 255 / .15) 40%, rgb(245 184 61 / .0) 60%, rgb(124 196 255 / .6)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; z-index: 4; }
+.holo-beam { position: absolute; left: 12%; right: 12%; top: 100%; height: 70px; background: radial-gradient(60% 100% at 50% 0%, rgb(124 196 255 / .2), transparent 70%); filter: blur(4px); }
+.holo-in { position: absolute; left: 50%; top: 50%; width: var(--dw, 300px); height: var(--dh, 380px); transform: translate(-50%, -50%) scale(var(--s, 1)); }
+#holo.boot .holo-frame, #holo.boot .holo-edge { animation: boot .55s var(--out) both; }
+@keyframes boot { 0% { clip-path: inset(49.5% 0 49.5% 0); filter: brightness(3); } 45% { clip-path: inset(49.5% 0 49.5% 0); filter: brightness(2); } 100% { clip-path: inset(0 0 0 0); filter: none; } }
+
+/* Las pantallas (300 × 380, en px del dibujo) */
+.scr { position: absolute; inset: 0; padding: 20px 20px 18px; display: flex; flex-direction: column; gap: 10px; opacity: 0; visibility: hidden; font-size: 14px; color: var(--ink); }
+.scr.on { opacity: 1; visibility: visible; animation: scrIn .5s var(--out) both; }
+@keyframes scrIn { 0% { opacity: 0; transform: translateY(10px); filter: blur(4px); } 30% { opacity: .5; } 40% { opacity: .2; } 100% { opacity: 1; transform: none; filter: none; } }
+.sh { display: flex; align-items: center; justify-content: space-between; }
+.sh-k { font: 800 12px var(--display); letter-spacing: .22em; text-transform: uppercase; color: var(--ink2); }
+.sh-k i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--deco); margin-right: 8px; box-shadow: 0 0 10px var(--deco); vertical-align: 1px; }
+.pill { font: 700 12px var(--sans); letter-spacing: .02em; padding: 4px 9px; border-radius: 999px; border: 1px solid rgb(124 196 255 / .4); color: var(--deco); background: rgb(124 196 255 / .08); white-space: nowrap; }
+.card { border-radius: var(--r-card); background: rgb(255 255 255 / .045); border: 1px solid rgb(255 255 255 / .08); padding: 12px 14px; }
+.av { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; font: 900 14px var(--display); letter-spacing: .03em; color: var(--ink); background: linear-gradient(135deg, #3a2b6a, #241c40); border: 1.5px solid rgb(201 168 255 / .45); flex: none; }
+.av.me { background: linear-gradient(135deg, var(--violet), #5a3a99); border-color: rgb(255 255 255 / .5); box-shadow: 0 0 18px rgb(155 93 229 / .7); }
+.big { font: 900 30px/0.95 var(--display); text-transform: uppercase; letter-spacing: .01em; }
+.big.sm { font-size: 22px; }
+.mut { color: var(--muted); font-size: 13px; }
+.tbtn { display: grid; place-items: center; height: 40px; border-radius: 999px; background: var(--teal); color: #062523; font: 700 14px var(--sans); }
+
+/* 1 · Una cuenta */
+.s1 .me { display: flex; gap: 12px; align-items: center; }
+.s1 .me .av { width: 50px; height: 50px; font-size: 17px; }
+.s1 .me b { display: block; font: 900 22px/1 var(--display); text-transform: uppercase; }
+.s1 .net { position: relative; width: 260px; height: 190px; margin: 0 auto; }
+.s1 .net svg { position: absolute; inset: 0; }
+.s1 .node { position: absolute; width: 58px; text-align: center; transform: translate(-50%, -50%); font: 700 12.5px var(--sans); color: var(--ink2); }
+.s1 .node span { display: grid; place-items: center; width: 46px; height: 46px; margin: 0 auto 4px; border-radius: 14px; background: linear-gradient(135deg, rgb(155 93 229 / .5), rgb(124 196 255 / .35)); border: 1px solid rgb(255 255 255 / .2); }
+.scr.on .node span { animation: nodeHit 6s ease-in-out infinite; animation-delay: var(--d); }
+@keyframes nodeHit { 0%, 12%, 100% { box-shadow: none; transform: none; } 4% { box-shadow: 0 0 0 4px rgb(124 196 255 / .25), 0 0 24px rgb(124 196 255 / .8); transform: scale(1.1); } }
+.s1 .trav { position: absolute; left: 0; top: 0; width: 26px; height: 26px; font-size: 11px; offset-path: path("M130 63A32 32 0 1 1 129.99 63"); offset-rotate: 0deg; offset-distance: 0%; }
+.scr.on .trav { animation: trav 6s linear infinite; }
+@keyframes trav { to { offset-distance: 100%; } }
+
+/* 2 · El pase */
+.s2 .qr-box { position: relative; width: 176px; height: 176px; margin: 0 auto; display: grid; place-items: center; }
+.s2 .qr-card { width: 118px; height: 118px; border-radius: 14px; background: #f4f2ff; padding: 8px; position: relative; overflow: hidden; }
+.s2 .qr-card svg { width: 100%; height: 100%; display: block; }
+.s2 .qr-card::after { content: ""; position: absolute; left: 0; right: 0; height: 26px; top: -30px; background: linear-gradient(180deg, transparent, rgb(124 196 255 / .55), transparent); }
+.s2.scan .qr-card::after { animation: scan .6s ease-out; }
+@keyframes scan { to { top: 110%; } }
+.s2 .ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.s2 .ring circle { fill: none; stroke-width: 3.5; stroke-linecap: round; }
+.scr.on .ring .run { animation: ringRun 3s linear infinite; }
+@keyframes ringRun { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 289; } }
+.s2 .cap { text-align: center; font-weight: 600; font-size: 13.5px; color: var(--ink2); }
+.s2 .crowd-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.s2 .crowd-h b { font: 900 22px var(--display); text-transform: uppercase; transition: color .3s; }
+.s2 .bars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.s2 .bars i { height: 8px; border-radius: 4px; background: rgb(255 255 255 / .08); transition: background .4s, box-shadow .4s; }
+
+/* 3 · Entrenar */
+.s3 .sets { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.s3 .sets li { display: grid; grid-template-columns: 26px 1fr 26px; align-items: center; gap: 10px; padding: 5px 10px; border-radius: var(--r-row); background: rgb(255 255 255 / .04); font-weight: 600; }
+.s3 .sets li > span { font: 900 16px var(--display); color: var(--muted); text-align: center; }
+.s3 .ck { width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgb(255 255 255 / .2); display: grid; place-items: center; }
+.s3 .ck svg { width: 14px; height: 14px; opacity: 0; }
+.s3 li.done .ck { border-color: var(--violet); background: var(--violet); }
+.s3 li.done .ck svg { opacity: 1; }
+.scr.on.s3 li.tick { animation: tick 3.6s var(--out) infinite; animation-delay: var(--d); }
+.scr.on.s3 li.tick .ck { animation: tickCk 3.6s var(--out) infinite; animation-delay: var(--d); }
+.scr.on.s3 li.tick .ck svg { animation: tickSv 3.6s var(--out) infinite; animation-delay: var(--d); }
+@keyframes tick { 0%, 20% { background: rgb(255 255 255 / .04); } 26% { background: rgb(155 93 229 / .22); } 60%, 100% { background: rgb(255 255 255 / .04); } }
+@keyframes tickCk { 0%, 20% { border-color: rgb(255 255 255 / .2); background: transparent; transform: scale(1); } 26% { transform: scale(1.25); border-color: var(--violet); background: var(--violet); } 34%, 96% { transform: scale(1); border-color: var(--violet); background: var(--violet); } 100% { border-color: rgb(255 255 255 / .2); background: transparent; } }
+@keyframes tickSv { 0%, 22% { opacity: 0; } 28%, 96% { opacity: 1; } 100% { opacity: 0; } }
+.s3 .sug { display: flex; align-items: center; gap: 10px; }
+.s3 .sug b { font: 900 26px var(--display); }
+.s3 .seg { display: grid; grid-template-columns: 1fr 1fr; position: relative; border-radius: 999px; background: rgb(255 255 255 / .06); padding: 3px; margin-top: 6px; }
+.s3 .seg::before { content: ""; position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 999px; background: var(--teal); }
+.scr.on.s3 .seg::before { animation: seg 4s var(--out) infinite; }
+@keyframes seg { 0%, 45% { transform: translateX(0); } 55%, 95% { transform: translateX(100%); } 100% { transform: translateX(0); } }
+.s3 .seg b { position: relative; text-align: center; font-size: 12.5px; padding: 6px 0; mix-blend-mode: difference; color: #fff; }
+
+/* 4 · Récords y vitrina */
+.s4 .shelf { position: relative; height: 150px; display: flex; align-items: flex-end; justify-content: center; gap: 18px; padding-bottom: 12px; }
+.s4 .shelf::after { content: ""; position: absolute; left: 4px; right: 4px; bottom: 0; height: 12px; border-radius: 4px; background: linear-gradient(180deg, #3a3060, #1d1734); box-shadow: 0 8px 20px rgb(0 0 0 / .5); }
+.s4 .tro { width: 56px; opacity: .7; filter: saturate(.6); }
+.s4 .tro.new { width: 86px; opacity: 1; filter: drop-shadow(0 0 16px rgb(245 184 61 / .65)); position: relative; z-index: 1; }
+.scr.on.s4 .tro.new { animation: troDrop 4s var(--out) infinite; }
+@keyframes troDrop { 0% { transform: translateY(-170px) rotate(-14deg); opacity: 0; } 14% { transform: translateY(6px) rotate(3deg); opacity: 1; } 20% { transform: translateY(-4px) rotate(-1deg); } 26%, 92% { transform: none; opacity: 1; } 100% { transform: none; opacity: 0; } }
+.s4 .rays { position: absolute; left: 50%; bottom: 52px; width: 170px; height: 170px; margin-left: -85px; background: repeating-conic-gradient(rgb(245 184 61 / .22) 0 8deg, transparent 8deg 22deg); border-radius: 50%; -webkit-mask: radial-gradient(circle, #000 20%, transparent 68%); mask: radial-gradient(circle, #000 20%, transparent 68%); opacity: 0; }
+.scr.on.s4 .rays { animation: rays 4s linear infinite; }
+@keyframes rays { 0%, 14% { opacity: 0; transform: rotate(0); } 22%, 85% { opacity: 1; } 100% { opacity: 0; transform: rotate(60deg); } }
+.s4 .story { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; position: relative; }
+.s4 .story::before { content: ""; position: absolute; left: 8px; right: 8px; top: 7px; height: 2px; background: linear-gradient(90deg, rgb(155 93 229 / .3), var(--gold)); }
+.s4 .story span { position: relative; display: grid; justify-items: center; gap: 4px; font: 800 13px var(--display); color: var(--ink2); }
+.s4 .story span::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--violet); border: 2px solid #120f1d; }
+.s4 .story span:last-child { color: var(--gold); }
+.s4 .story span:last-child::before { background: var(--gold); box-shadow: 0 0 12px var(--gold); }
+
+/* 5 · Metas */
+.s5 svg.chart { width: 100%; height: 116px; overflow: visible; }
+.scr.on.s5 .proj { animation: draw 2.2s var(--out) .5s both; }
+@keyframes draw { from { stroke-dashoffset: 220; } to { stroke-dashoffset: 0; } }
+.scr.on.s5 .cone { animation: fadeIn 1s ease 1.4s both; }
+.scr.on.s5 .goalhit { animation: pop .5s var(--spring) 2.4s both; }
+@keyframes fadeIn { from { opacity: 0; } }
+@keyframes pop { from { transform: scale(0); opacity: 0; } }
+.s5 .goalhit { transform-box: fill-box; transform-origin: center; }
+.s5 .verdict { display: flex; gap: 10px; align-items: center; }
+.s5 .verdict i { width: 10px; height: 10px; border-radius: 50%; background: var(--deco); box-shadow: 0 0 10px var(--deco); flex: none; }
+.s5 .fast { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.s5 .fast b { font: 900 20px var(--display); text-transform: uppercase; }
+
+/* 6 · Tu semana */
+.s6 .streak { display: flex; align-items: center; gap: 12px; }
+.s6 .flame { width: 54px; height: 64px; transform-origin: 50% 100%; }
+.scr.on.s6 .flame { animation: flick 1.6s ease-in-out infinite; }
+@keyframes flick { 0%, 100% { transform: scale(1, 1) rotate(0); } 30% { transform: scale(1.04, .96) rotate(-2deg); } 60% { transform: scale(.97, 1.05) rotate(2deg); } }
+.s6 .streak b { font: 900 44px/0.85 var(--display); }
+.s6 .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+.s6 .week span { font: 800 12px var(--display); color: var(--muted); }
+.s6 .week i { display: block; height: 26px; border-radius: 8px; background: rgb(255 255 255 / .05); border: 1px solid rgb(255 255 255 / .06); margin-top: 4px; }
+.s6 .week .y i { background: linear-gradient(180deg, var(--violet), #6a4ba3); border-color: transparent; }
+.scr.on.s6 .week .n i { animation: dayOn 3.4s var(--spring) 1s infinite; }
+@keyframes dayOn { 0%, 20% { background: rgb(255 255 255 / .05); transform: scale(1); } 28% { transform: scale(1.18); background: linear-gradient(180deg, var(--violet), #6a4ba3); } 36%, 94% { transform: none; background: linear-gradient(180deg, var(--violet), #6a4ba3); } 100% { background: rgb(255 255 255 / .05); } }
+.s6 .sky { position: relative; flex: 1; min-height: 104px; border-radius: 14px; background: radial-gradient(100% 120% at 50% 100%, #2b1f45, #0c0a18); overflow: hidden; border: 1px solid rgb(255 255 255 / .06); }
+.s6 .sky svg { position: absolute; inset: 6px 10px 18px; width: calc(100% - 20px); height: calc(100% - 24px); }
+.s6 .sky .st { opacity: .18; transform-box: fill-box; transform-origin: center; }
+.s6 .sky .st.lit { opacity: 1; }
+.scr.on.s6 .sky .st.lit { animation: star .7s var(--spring) both; animation-delay: var(--d); }
+@keyframes star { from { opacity: .18; transform: scale(.5); } 60% { transform: scale(1.6); } to { opacity: 1; transform: scale(1); } }
+.s6 .sky small { position: absolute; left: 12px; bottom: 5px; font: 800 12px var(--display); letter-spacing: .2em; text-transform: uppercase; color: var(--ink2); }
+
+/* 7 · Clases */
+.s7 .spots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; justify-items: center; padding: 4px 0; }
+.s7 .spots .av { width: 42px; height: 42px; font-size: 15px; }
+.s7 .spots .free { background: none; border: 1.5px dashed rgb(255 255 255 / .22); color: transparent; }
+.s7 .spots .you { position: relative; }
+.s7 .spots .you b { position: absolute; inset: -1.5px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, var(--violet), #5a3a99); border: 1.5px solid rgb(255 255 255 / .5); box-shadow: 0 0 18px rgb(155 93 229 / .8); color: var(--ink); font-size: 14px; opacity: 0; }
+.scr.on.s7 .you b { animation: you 4.5s var(--spring) .6s infinite; }
+@keyframes you { 0% { opacity: 0; transform: scale(.3); } 10%, 90% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+.s7 .wait { display: flex; justify-content: space-between; align-items: center; }
+.s7 .wait b { font: 900 20px var(--display); text-transform: uppercase; }
+.s7 .wn { display: inline-block; position: relative; width: 14px; height: 22px; overflow: hidden; vertical-align: bottom; }
+.s7 .wn span { position: absolute; left: 0; top: 0; display: grid; line-height: 22px; }
+.scr.on.s7 .wn span { animation: wn 4.5s var(--out) infinite; }
+@keyframes wn { 0%, 45% { transform: translateY(0); } 55%, 100% { transform: translateY(-22px); } }
+
+/* 8 · Comunidad */
+.s8 .stories { display: flex; gap: 9px; }
+.s8 .stories .av { width: 40px; height: 40px; box-shadow: 0 0 0 2px #120f1d, 0 0 0 4px var(--c, var(--violet)); }
+.s8 .post { display: flex; align-items: center; gap: 10px; }
+.s8 .post > div { flex: 1; min-width: 0; }
+.s8 .post b { display: block; font-weight: 700; }
+.s8 .fz { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: rgb(61 214 203 / .12); border: 1px solid rgb(61 214 203 / .5); color: var(--teal); }
+.s8 .fz svg { width: 22px; height: 22px; }
+.scr.on.s8 .fz svg { animation: fz 2.8s var(--spring) .8s infinite; }
+@keyframes fz { 0%, 20% { transform: scale(1); } 26% { transform: scale(1.5) rotate(-10deg); } 36%, 100% { transform: scale(1); } }
+.s8 .fz em { position: absolute; top: -9px; right: -9px; font: 900 11px var(--display); background: var(--gold); color: #1a1205; border-radius: 999px; padding: 2px 6px; font-style: normal; }
+.s8 .poll { display: grid; gap: 6px; }
+.s8 .poll div { position: relative; height: 23px; border-radius: 8px; background: rgb(255 255 255 / .05); overflow: hidden; display: flex; align-items: center; padding: 0 10px; font-weight: 600; font-size: 12.5px; }
+.s8 .poll div::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); background: linear-gradient(90deg, rgb(155 93 229 / .55), rgb(124 196 255 / .35)); border-radius: 8px; transform-origin: left; }
+.scr.on.s8 .poll div::before { animation: bar 1.2s var(--out) both; animation-delay: var(--d); }
+@keyframes bar { from { transform: scaleX(0); } }
+.s8 .poll span { position: relative; }
+.s8 .ev { display: flex; align-items: center; gap: 10px; }
+.s8 .ev .medal { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 40% 30%, #3a2d5c, #17122a); border: 2.5px solid var(--gold); font: 900 12px var(--display); color: var(--gold); flex: none; }
+
+/* 9 · Profesionales (todavía no) */
+.s9 .pros { display: grid; gap: 8px; }
+.s9 .pro { display: flex; align-items: center; gap: 10px; }
+.s9 .pro .ic { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: rgb(124 196 255 / .1); border: 1px solid rgb(124 196 255 / .3); color: var(--deco); flex: none; }
+.s9 .pro .ic svg { width: 20px; height: 20px; }
+.s9 .pro div { flex: 1; }
+.s9 .pro b { display: block; }
+.s9 .meas { display: flex; align-items: flex-end; gap: 7px; height: 70px; padding-top: 6px; }
+.s9 .meas i { flex: 1; border-radius: var(--r-bar) var(--r-bar) 2px 2px; background: linear-gradient(180deg, var(--lav), #6a4ba3); height: var(--h); }
+.s9 .blurred { filter: blur(7px) saturate(.8); opacity: .75; }
+.s9 .peek { position: absolute; inset: 0; padding: inherit; display: flex; flex-direction: column; gap: 12px; clip-path: inset(0 0 100% 0); }
+.scr.on.s9 .peek { animation: peek 5s ease-in-out 1.4s infinite; }
+@keyframes peek { 0%, 40% { clip-path: inset(36% 0 64% 0); } 52%, 64% { clip-path: inset(36% 0 44% 0); } 76%, 100% { clip-path: inset(36% 0 64% 0); } }
+.s9 .lock { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 6px; text-align: center; z-index: 2; }
+.s9 .lock span { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; background: rgb(7 6 11 / .7); border: 1px solid rgb(245 184 61 / .55); color: var(--gold); box-shadow: 0 0 30px rgb(245 184 61 / .3); }
+.s9 .lock b { font: 900 22px var(--display); text-transform: uppercase; letter-spacing: .04em; text-shadow: 0 2px 12px #000; }
+
+/* 10 · Para los gyms */
+.s10 { flex-direction: row; gap: 10px; }
+.s10 .side { width: 92px; display: grid; align-content: start; gap: 4px; padding-top: 2px; }
+.s10 .side span { display: flex; align-items: center; gap: 6px; padding: 7px 8px; border-radius: 10px; font-size: 12.5px; font-weight: 600; color: var(--ink2); }
+.s10 .side span i { width: 8px; height: 8px; border-radius: 3px; background: var(--c); flex: none; }
+.s10 .side span.on { background: rgb(255 255 255 / .07); color: var(--ink); }
+.s10 .main { flex: 1; display: grid; align-content: start; gap: 7px; min-width: 0; }
+.s10 .row { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: var(--r-row); background: rgb(255 255 255 / .04); }
+.s10 .row .av { width: 28px; height: 28px; font-size: 11px; }
+.s10 .row .ln { flex: 1; display: grid; gap: 5px; }
+.s10 .row .ln i { display: block; height: 6px; border-radius: 3px; background: rgb(255 255 255 / .12); width: var(--w); }
+.s10 .row .ln i + i { background: rgb(255 255 255 / .06); }
+.s10 .tag { font-size: 11.5px; font-weight: 700; padding: 3px 6px; border-radius: 999px; color: var(--deco); border: 1px solid rgb(124 196 255 / .45); white-space: nowrap; }
+.scr.on.s10 .tag { animation: tagGlow 2.4s ease-in-out infinite; }
+@keyframes tagGlow { 50% { box-shadow: 0 0 14px rgb(124 196 255 / .6); background: rgb(124 196 255 / .12); } }
+
+/* 11 · El vestidor */
+.s11 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+.s11 .grid > span { position: relative; aspect-ratio: 1; border-radius: var(--r-card); background: rgb(255 255 255 / .045); border: 1px solid rgb(255 255 255 / .08); display: grid; place-items: center; }
+.s11 .grid svg { width: 70%; height: 70%; }
+.s11 .grid .q { color: rgb(201 168 255 / .55); font: 900 30px var(--display); background: repeating-linear-gradient(-45deg, rgb(255 255 255 / .03) 0 6px, transparent 6px 12px), rgb(255 255 255 / .03); }
+.s11 .grid .q::after { content: ""; position: absolute; right: 7px; bottom: 7px; width: 9px; height: 7px; border-radius: 2px; background: rgb(245 184 61 / .6); box-shadow: 0 -5px 0 -2px rgb(245 184 61 / .0), inset 0 0 0 1px rgb(245 184 61 / .4); }
+.s11 .grid .nw { border-color: rgb(245 184 61 / .6); box-shadow: 0 0 22px rgb(245 184 61 / .25); }
+.scr.on.s11 .grid .nw { animation: nw 2.6s ease-in-out infinite; }
+@keyframes nw { 50% { box-shadow: 0 0 30px rgb(245 184 61 / .55); } }
+.s11 .grid .nw em { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); font: 900 11.5px var(--display); letter-spacing: .1em; text-transform: uppercase; font-style: normal; background: var(--gold); color: #1a1205; border-radius: 999px; padding: 2px 7px; }
+
+/* En el teléfono, la caja del dibujo es 340 × 290 y cada pantalla guarda una línea secundaria. */
+#holo.ph { --dw: 340px; --dh: 290px; }
+#holo.ph .s1 .net { margin: -21px auto; transform: scale(.78); }
+#holo.ph .s1 > :last-child, #holo.ph .s2 .cap, #holo.ph .s3 .big, #holo.ph .s3 .sets li:first-child, #holo.ph .s4 .mut, #holo.ph .s5 .fast, #holo.ph .s7 > :nth-child(2), #holo.ph .s8 .ev, #holo.ph .s8 .poll div:last-child, #holo.ph .s10 .main .row:nth-child(n+5) { display: none; }
+#holo.ph .s3 { gap: 8px; }
+#holo.ph .s9 .meas { display: none; }
+#holo.ph .s2 .qr-box { width: 140px; height: 140px; }
+#holo.ph .s2 .qr-card { width: 90px; height: 90px; padding: 6px; border-radius: 12px; }
+#holo.ph .s4 .shelf { height: 118px; }
+#holo.ph .s4 .tro { width: 46px; } #holo.ph .s4 .tro.new { width: 70px; }
+#holo.ph .s5 svg.chart { height: 96px; }
+#holo.ph .s6 .sky { min-height: 80px; }
+#holo.ph .s7 .spots { grid-template-columns: repeat(6, 1fr); }
+#holo.ph .s7 .spots .av { width: 40px; height: 40px; }
+#holo.ph .s11 .grid { grid-template-columns: repeat(5, 1fr); }
+
+/* ── Arriba: la marca y el recorrido ───────────────────────────────────────── */
+.top { position: fixed; z-index: 20; left: 0; right: 0; top: 0; height: calc(var(--head) + env(safe-area-inset-top)); padding: env(safe-area-inset-top) max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left)); display: flex; align-items: center; gap: 12px; background: linear-gradient(180deg, rgb(7 6 11 / .85), rgb(7 6 11 / 0)); }
+.brand { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+.brand svg { width: 38px; height: 24px; }
+.brand b { font: 700 21px/1 "Outfit", var(--sans); letter-spacing: -.02em; }
+.brand b span { color: var(--red); }
+.count { display: none; margin-left: auto; font: 800 13px var(--display); letter-spacing: .22em; text-transform: uppercase; color: var(--ink2); }
+.count b { color: var(--ink); }
+.rail { position: fixed; z-index: 20; right: max(18px, env(safe-area-inset-right)); top: 50%; translate: 0 -50%; }
+.rail ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.rail { right: max(18px, env(safe-area-inset-right), calc(var(--fx) + 18px)); }
+.rail a { display: flex; align-items: center; justify-content: flex-end; gap: 10px; height: clamp(26px, 2.4vh, 32px); text-decoration: none; color: var(--ink2); font: 800 clamp(11px, .55vw, 15px) var(--display); letter-spacing: .18em; text-transform: uppercase; }
+.rail a span { opacity: 0; translate: 6px 0; transition: opacity .25s, translate .25s var(--out); white-space: nowrap; text-shadow: 0 1px 8px #000; }
+.rail a:hover span, .rail a:focus-visible span, .rail a[aria-current] span { opacity: 1; translate: 0 0; }
+.rail a::after { content: ""; width: clamp(8px, .42vw, 11px); height: clamp(8px, .42vw, 11px); border-radius: 50%; background: rgb(255 255 255 / .22); transition: all .3s var(--out); flex: none; }
+.rail a:hover::after { background: rgb(255 255 255 / .6); }
+.rail a[aria-current]::after { background: var(--deco); box-shadow: 0 0 10px var(--deco); height: 18px; border-radius: 6px; }
+.rail a[aria-current] { color: var(--ink); }
+
+/* ── El recorrido: un capítulo por pantalla ────────────────────────────────── */
+main { position: relative; z-index: 10; }
+.ch { position: relative; min-height: 100vh; min-height: 100svh; scroll-snap-align: start; scroll-snap-stop: always; display: flex; align-items: flex-start; padding: max(calc(var(--head) + 24px), 24vh) 6vw 48px calc(var(--fx) + var(--fw) * .06); }
+.ch-in { width: min(calc(var(--fw) * .3), 36rem); position: relative; }
+/* El velo de la columna de texto: fijo, para que la sala nunca le baje el contraste. */
+@media (min-width: 761px) { .stage::after { content: ""; position: fixed; inset: 0; z-index: 5; pointer-events: none; background: linear-gradient(90deg, rgb(7 6 11 / .8) 0, rgb(7 6 11 / .65) calc(var(--fx) + var(--fw) * .06 + min(var(--fw) * .3, 36rem)), transparent calc(var(--fx) + var(--fw) * .13 + min(var(--fw) * .3, 36rem))); } }
+.kick { margin: 0 0 14px; display: flex; width: fit-content; align-items: center; gap: 10px; font: 800 clamp(13px, .7vw, 17px) var(--display); letter-spacing: .24em; text-transform: uppercase; color: var(--ink2); }
+.kick span { color: var(--deco); }
+.kick::before { content: ""; width: 26px; height: 2px; background: linear-gradient(90deg, var(--violet), var(--deco)); }
+/* Los títulos nunca más anchos que su columna: la palabra más larga entra entera (y no toca a Gogo). */
+.ch h1, .ch h2 { margin: 0; font-size: clamp(44px, min(4.6vw, 8.5vh, min(calc(var(--fw) * .3), 36rem) / 5.3), 112px); }
+.ch h1 { font-size: clamp(52px, min(5.6vw, 10.3vh, min(calc(var(--fw) * .3), 36rem) / 5.1), 136px); }
+.desc { margin: 18px 0 0; font-size: clamp(16px, min(1.15vw, 1.9vh), 24px); line-height: 1.55; color: var(--ink2); max-width: 40ch; }
+.desc b { color: var(--ink); font-weight: 600; }
+.acts { margin-top: 28px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+.next { display: inline-flex; align-items: center; gap: 10px; height: 50px; padding: 0 22px 0 24px; border-radius: 999px; background: var(--teal); color: #062523; font: 700 16px var(--sans); text-decoration: none; box-shadow: 0 10px 30px rgb(61 214 203 / .25); transition: transform .25s var(--spring), box-shadow .25s; }
+.next:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgb(61 214 203 / .35); }
+.next:active { transform: scale(.97); }
+.next svg { width: 18px; height: 18px; }
+.hint { font-size: 13.5px; color: var(--ink2); }
+@media (hover: none) { .hint .kb { display: none; } }
+.ch .ch-in > * { transition: opacity .7s var(--out), translate .7s var(--out), filter .7s; }
+.js .ch:not(.on) .ch-in > * { opacity: 0; translate: 0 22px; filter: blur(4px); }
+.js .ch.on .ch-in > :nth-child(2) { transition-delay: .06s; }
+.js .ch.on .ch-in > :nth-child(3) { transition-delay: .14s; }
+.js .ch.on .ch-in > :nth-child(n+4) { transition-delay: .22s; }
+
+/* El final */
+.fin .neon { width: 120px; height: 76px; margin: 0 0 18px -6px; overflow: visible; }
+.fin h2 { font-size: clamp(64px, min(7.4vw, 12vh, min(calc(var(--fw) * .3), 36rem) / 3.6), 150px); }
+.warm { margin-top: 26px; width: min(100%, 360px); }
+.warm-h { display: flex; justify-content: space-between; align-items: baseline; font: 800 13px var(--display); letter-spacing: .22em; text-transform: uppercase; color: var(--ink2); }
+.warm-b { margin-top: 8px; height: 8px; border-radius: 4px; background: rgb(255 255 255 / .08); overflow: hidden; }
+.warm-b i { display: block; height: 100%; width: var(--p, 96%); border-radius: 4px; background: linear-gradient(90deg, var(--violet), var(--deco) 70%, var(--gold)); box-shadow: 0 0 14px rgb(124 196 255 / .6); position: relative; }
+.warm-b i::after { content: ""; position: absolute; right: 0; top: -3px; width: 4px; height: 14px; border-radius: 2px; background: #fff; box-shadow: 0 0 10px #fff; animation: ember 1.1s ease-in-out infinite; }
+@keyframes ember { 50% { opacity: .35; } }
+.share { margin-top: 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.share p { margin: 0; flex-basis: 100%; font-size: 14.5px; color: var(--ink2); }
+.share-b { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid var(--teal); background: rgb(61 214 203 / .1); color: var(--teal); font: 700 15px var(--sans); cursor: pointer; transition: background .2s; }
+.share-b:hover { background: rgb(61 214 203 / .2); }
+.share-ok { font-size: 13.5px; font-weight: 600; color: var(--ink); opacity: 0; transition: opacity .25s; }
+.share-ok.on { opacity: 1; }
+.again { color: var(--teal); font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
+.again:hover { text-decoration: underline; text-underline-offset: 4px; }
+.foot { position: absolute; left: calc(var(--fx) + var(--fw) * .06); bottom: max(18px, env(safe-area-inset-bottom)); margin: 0; font-size: 12.5px; color: var(--muted); }
+
+/* El Enlace en neón (enlace-link.tsx, neon) y su gesto: los anillos llegan, el guion los une y un destello lo cierra. */
+.fin.on .lk-l { animation: lkL .75s var(--out) .5s both, flk 2.6s steps(1) 1.4s; }
+.fin.on .lk-r { animation: lkR .75s var(--out) .5s both, flk 2.6s steps(1) 1.6s; }
+.fin.on .lk-bar { transform-box: fill-box; transform-origin: center; animation: lkBar .45s var(--spring) 1.15s both; }
+.fin.on .lk-lock { transform-box: fill-box; transform-origin: center; animation: lkLock .5s ease-out 1.45s both; }
+.fin.on .lk-glow { transform-box: fill-box; transform-origin: center; animation: lkGlow 1s ease-out 1.45s both; }
+.fin:not(.on) .lk-glow { opacity: 0; }
+@keyframes lkL { from { transform: translateX(-46px); opacity: 0; } }
+@keyframes lkR { from { transform: translateX(46px); opacity: 0; } }
+@keyframes lkBar { from { transform: scaleX(0); } }
+@keyframes lkLock { 40% { transform: scale(1.06); } }
+@keyframes lkGlow { 0% { transform: scale(.9); opacity: 0; } 1% { opacity: .7; } 100% { transform: scale(2.1); opacity: 0; } }
+@keyframes flk { 0% { opacity: 1; } 4% { opacity: .35; } 7% { opacity: 1; } 11% { opacity: .5; } 13% { opacity: 1; } }
+
+/* ── El teléfono: la sala arriba, el texto abajo ───────────────────────────── */
+@media (max-width: 760px) {
+  :root { --head: 52px; }
+  .brand b { font-size: 19px; }
+  .count { display: block; }
+  /* En el teléfono, la barra del recorrido es solo una guía: se avanza deslizando o con "Seguir". */
+  .rail { top: calc(var(--head) + env(safe-area-inset-top) - 4px); left: 16px; right: 16px; translate: none; pointer-events: none; }
+  .rail ol { grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; }
+  .rail a { height: 20px; justify-content: stretch; }
+  .rail a::after { width: 100%; }
+  .rail a span { display: none; }
+  .rail a::after { width: 100%; height: 3px; border-radius: 2px; }
+  .rail a[aria-current]::after { height: 3px; border-radius: 2px; }
+  .ch { align-items: flex-end; padding: 0 20px max(26px, calc(env(safe-area-inset-bottom) + 16px)); }
+  .fin::before { height: 66% !important; }
+  .ch::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 50%; background: linear-gradient(180deg, rgb(7 6 11 / 0), rgb(7 6 11 / .82) 26%, rgb(7 6 11 / .95)); pointer-events: none; }
+  .ch-in { width: 100%; }
+  .kick { margin-bottom: 10px; font-size: 12px; }
+  .ch h1 { font-size: clamp(42px, 12.4vw, 60px); }
+  .ch h2 { font-size: clamp(36px, 10.4vw, 50px); }
+  .desc { margin-top: 12px; font-size: 15px; line-height: 1.5; }
+  .acts { margin-top: 18px; }
+  .next { height: 48px; }
+  .fin h2 { font-size: clamp(60px, 18vw, 92px); }
+  .fin .neon { width: 84px; height: 54px; margin-bottom: 12px; }
+  .warm { margin-top: 18px; }
+  .fin { padding-bottom: max(54px, calc(env(safe-area-inset-bottom) + 44px)); }
+  .foot { left: 20px; bottom: max(16px, env(safe-area-inset-bottom)); }
+  #bubble { max-width: 190px; font-size: 14px; padding: 8px 12px; }
+}
+@media (max-width: 760px) and (max-height: 780px) { .fin .neon { display: none; } }
+@media (max-width: 760px) and (max-height: 700px) {
+  .desc { font-size: 14px; }
+  .ch h2 { font-size: 34px; }
+}
+
+/* Movimiento reducido: la misma sala, quieta y prendida. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, ::before, ::after { animation-duration: .001ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; transition-delay: 0s !important; }
+  .holo-frame::after { display: none; }
+  .scr.on.s3 li.tick, .scr.on.s3 li.tick .ck, .scr.on.s3 li.tick .ck svg, .scr.on.s6 .week .n i, .scr.on.s7 .you b, .scr.on.s7 .wn span, .scr.on.s4 .tro.new, .scr.on.s4 .rays { animation: none !important; }
+  .s3 li.tick { background: rgb(255 255 255 / .04); }
+  .s3 li.tick .ck { border-color: var(--violet); background: var(--violet); }
+  .s3 li.tick .ck svg { opacity: 1; }
+  .s6 .week .n i { background: linear-gradient(180deg, var(--violet), #6a4ba3); }
+  .s7 .you b { opacity: 1; }
+  .s7 .wn span { transform: translateY(-22px); }
+  .s4 .rays { opacity: .8; }
+  .s9 .peek { animation: none !important; }
+  .warm-b i::after { animation: none; }
+}
+</style>
 </head>
 <body>
-  <main>
-    <h1>Go<span>-</span>Gyms</h1>
-    <p>Muy pronto</p>
-  </main>
+<a class="skip" href="#c12">Saltar al final del recorrido</a>
+
+<div class="stage" aria-hidden="true">
+  <div class="lit-fallback"></div>
+  <canvas id="back"></canvas>
+  <div id="holo">
+    <div class="holo-frame">
+      <div class="holo-in">
+        <!-- 1 · Una cuenta, todos tus gyms -->
+        <div class="scr s1" data-s="1">
+          <div class="sh"><span class="sh-k"><i></i>Tu perfil</span><span class="pill">Uno solo</span></div>
+          <div class="me"><span class="av me">VOS</span><div><b>Perfil fitness</b><span class="mut">Va con vos a cada gym</span></div></div>
+          <div class="net">
+            <svg viewBox="0 0 260 190" fill="none"><circle cx="130" cy="95" r="65" stroke="#7cc4ff" stroke-opacity=".35" stroke-width="2" stroke-dasharray="3 7" stroke-linecap="round"/></svg>
+            <div class="node" style="left:130px;top:30px;--d:0s"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f4f2ff" stroke-width="2" stroke-linecap="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg></span>Tu gym</div>
+            <div class="node" style="left:186.3px;top:127.5px;--d:2s"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f4f2ff" stroke-width="2" stroke-linecap="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg></span>Otro gym</div>
+            <div class="node" style="left:73.7px;top:127.5px;--d:4s"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f4f2ff" stroke-width="2" stroke-linecap="round"><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/><circle cx="12" cy="12" r="10"/></svg></span>De viaje</div>
+            <span class="av me trav">VOS</span>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center"><span class="pill">Entrenos</span><span class="pill">Récords</span><span class="pill">Racha</span><span class="pill">Metas</span></div>
+        </div>
+        <!-- 2 · Entrar al gym -->
+        <div class="scr s2" data-s="2">
+          <div class="sh"><span class="sh-k"><i></i>Tu pase</span><span class="pill">En vivo</span></div>
+          <div class="qr-box">
+            <div class="qr-card"><svg viewBox="-1 -1 27 27" shape-rendering="crispEdges"><path id="qrPath" fill="#07060b"/></svg></div>
+            <svg class="ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" stroke="rgb(255 255 255 / .08)"/><circle class="run" cx="50" cy="50" r="46" stroke="#7cc4ff" stroke-dasharray="289"/></svg>
+          </div>
+          <p class="cap" style="margin:0">Cambia cada 30 s: una captura no sirve</p>
+          <div class="card"><div class="crowd-h"><span class="mut">Ahora en el gym</span><b id="crowdV">Tranquilo</b></div><div class="bars" id="crowdB"><i></i><i></i><i></i></div></div>
+        </div>
+        <!-- 3 · Entrenar -->
+        <div class="scr s3" data-s="3">
+          <div class="sh"><span class="sh-k"><i></i>Hoy · Tu programa</span><span class="pill">De tu coach</span></div>
+          <div class="big">Sentadilla</div>
+          <ol class="sets">
+            <li class="done"><span>1</span>40 kg × 10<i class="ck"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></i></li>
+            <li class="done"><span>2</span>40 kg × 10<i class="ck"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></i></li>
+            <li class="tick" style="--d:.2s"><span>3</span>40 kg × 10<i class="ck"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></i></li>
+          </ol>
+          <div class="card sug" style="padding:9px 14px"><div style="flex:1"><span class="mut">Siguiente serie</span><br><b>42,5 kg</b></div><span class="pill">Sugerida</span></div>
+          <div><span class="mut">Cardio</span><div class="seg"><b>Al principio</b><b>Al final</b></div></div>
+        </div>
+        <!-- 4 · Récords y vitrina -->
+        <div class="scr s4" data-s="4">
+          <div class="sh"><span class="sh-k"><i></i>Tu vitrina</span><span class="pill">Récord</span></div>
+          <div class="shelf">
+            <div class="rays"></div>
+            <svg class="tro" viewBox="0 0 64 80"><use href="#cup"/></svg>
+            <svg class="tro new" viewBox="0 0 64 80"><use href="#cup"/></svg>
+            <svg class="tro" viewBox="0 0 64 80"><use href="#cup"/></svg>
+          </div>
+          <div><div class="big">Peso muerto</div><span class="mut">Nuevo récord, con su historia</span></div>
+          <div class="story"><span>60 kg</span><span>70 kg</span><span>75 kg</span><span>80 kg</span></div>
+        </div>
+        <!-- 5 · Metas -->
+        <div class="scr s5" data-s="5">
+          <div class="sh"><span class="sh-k"><i></i>Tu meta</span><span class="pill">Proyección</span></div>
+          <div class="big">Sentadilla a 60 kg</div>
+          <svg class="chart" viewBox="0 0 260 150">
+            <path d="M0 30H260" stroke="#f5b83d" stroke-width="1.6" stroke-dasharray="5 5"/>
+            <text x="258" y="22" text-anchor="end" fill="#f5b83d" font-family="Barlow Condensed" font-weight="800" font-size="13" letter-spacing="1.5">META</text>
+            <path d="M0 75H260M0 120H260" stroke="rgb(255 255 255 / .06)"/>
+            <path class="cone" d="M138 84L232 14L232 58Z" fill="rgb(124 196 255 / .1)"/>
+            <polyline points="8,136 30,128 52,124 74,112 96,106 118,96 138,84" fill="none" stroke="#9b5de5" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+            <g fill="#9b5de5"><circle cx="8" cy="136" r="3.5"/><circle cx="30" cy="128" r="3.5"/><circle cx="52" cy="124" r="3.5"/><circle cx="74" cy="112" r="3.5"/><circle cx="96" cy="106" r="3.5"/><circle cx="118" cy="96" r="3.5"/><circle cx="138" cy="84" r="4.5" stroke="#fff" stroke-width="1.5"/></g>
+            <path class="proj" d="M138 84L216 30" stroke="#7cc4ff" stroke-width="2.5" stroke-dasharray="6 6" stroke-linecap="round" pathLength="220" style="stroke-dasharray:6 6"/>
+            <circle class="goalhit" cx="216" cy="30" r="7" fill="#7cc4ff" stroke="#07060b" stroke-width="2"/>
+          </svg>
+          <div class="card verdict"><i></i><div><b>A tu ritmo, llegás</b><br><span class="mut">en unas 9 semanas, si seguís así</span></div></div>
+          <div class="card fast"><div><span class="mut">Más rápido</span><br><b>5 km</b></div><span class="pill">31:40 → 29:55</span></div>
+        </div>
+        <!-- 6 · Tu semana -->
+        <div class="scr s6" data-s="6">
+          <div class="sh"><span class="sh-k"><i></i>Tu constancia</span><span class="pill">3 de 4</span></div>
+          <div class="streak">
+            <svg class="flame" viewBox="40 14 120 194"><defs><linearGradient id="fo" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#F53756"/><stop offset=".6" stop-color="#F57A56"/><stop offset="1" stop-color="#F5B83D"/></linearGradient><linearGradient id="fi" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#F5B83D"/><stop offset="1" stop-color="#FFF1C7"/></linearGradient></defs><path d="M100 20C112 60 150 80 150 140C150 178 128 204 100 204C72 204 50 178 50 140C50 112 66 98 74 76C80 96 88 104 96 106C92 76 94 46 100 20Z" fill="url(#fo)"/><path d="M100 96C108 120 126 132 126 158C126 184 114 200 100 200C86 200 74 184 74 160C74 144 82 136 88 124C90 134 94 140 98 140C96 124 96 110 100 96Z" fill="url(#fi)"/></svg>
+            <div><b>8</b><br><span class="mut">semanas de racha</span></div>
+          </div>
+          <div class="week"><div class="y"><span>L</span><i></i></div><div><span>M</span><i></i></div><div class="y"><span>M</span><i></i></div><div><span>J</span><i></i></div><div class="y"><span>V</span><i></i></div><div class="n"><span>S</span><i></i></div><div><span>D</span><i></i></div></div>
+          <div class="sky"><svg id="sky" viewBox="0 0 260 72"></svg><small>Tu año</small></div>
+        </div>
+        <!-- 7 · Clases y reservas -->
+        <div class="scr s7" data-s="7">
+          <div class="sh"><span class="sh-k"><i></i>Clases · Hoy</span><span class="pill">18:00</span></div>
+          <div><div class="big">Funcional</div><span class="mut">45 min · tu lugar en la sala</span></div>
+          <div class="spots" id="spots"></div>
+          <div class="card wait"><span class="mut">Lista de espera</span><b>Puesto <span class="wn"><span>2<br>1</span></span></b></div>
+          <div class="tbtn">Reservar</div>
+        </div>
+        <!-- 8 · Comunidad -->
+        <div class="scr s8" data-s="8">
+          <div class="sh"><span class="sh-k"><i></i>Tu gym · Comunidad</span></div>
+          <div class="stories"><span class="av" style="--c:#9b5de5">AR</span><span class="av" style="--c:#7cc4ff">MJ</span><span class="av" style="--c:#f5b83d">LS</span><span class="av" style="--c:#c9a8ff">DT</span><span class="av" style="--c:#9b5de5">PC</span></div>
+          <div class="card post" style="padding:9px 12px"><span class="av">MJ</span><div><b>Primera dominada</b><span class="mut">Darle fuerza</span></div><span class="fz"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg><em>+1</em></span></div>
+          <div class="poll"><b style="font-size:13px">¿Qué clase sumamos?</b><div style="--w:62%;--d:.3s"><span>Yoga</span></div><div style="--w:44%;--d:.45s"><span>Boxeo</span></div><div style="--w:28%;--d:.6s"><span>Pilates</span></div></div>
+          <div class="card ev" style="padding:9px 14px"><span class="medal">5K</span><div><b>Carrera 5K</b><br><span class="mut">Con otros gyms</span></div></div>
+        </div>
+        <!-- 9 · Profesionales (a medias) -->
+        <div class="scr s9" data-s="9">
+          <div class="sh"><span class="sh-k"><i></i>Tu equipo</span><span class="pill">Pronto</span></div>
+          <div class="blurred" style="display:grid;gap:12px">
+            <div class="pros">
+              <div class="card pro"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg></span><div><b>Coach</b><span class="mut">Del gym</span></div></div>
+              <div class="card pro"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21c-4 0-7-3-7-8 0-3 2-6 5-6 1 0 1.5.5 2 .5s1-.5 2-.5c3 0 5 3 5 6 0 5-3 8-7 8zM12 7c0-2 1-4 3-4"/></svg></span><div><b>Nutri</b><span class="mut">Independiente</span></div></div>
+              <div class="card pro"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M5 8h14M7 14h10"/></svg></span><div><b>Fisio</b><span class="mut">Del gym</span></div></div>
+            </div>
+            <div class="meas"><i style="--h:40%"></i><i style="--h:52%"></i><i style="--h:48%"></i><i style="--h:63%"></i><i style="--h:70%"></i><i style="--h:78%"></i></div>
+          </div>
+          <div class="lock"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><b>Todavía no</b></div>
+        </div>
+        <!-- 10 · Para los gyms (Gogo lo tapa) -->
+        <div class="scr s10" data-s="10">
+          <div class="side">
+            <span class="sh-k" style="padding:0 0 6px 2px;font-size:11.5px">Tu gym</span>
+            <span class="on"><i style="--c:#9b5de5"></i>Miembros</span><span><i style="--c:#7cc4ff"></i>Clases</span><span><i style="--c:#c9a8ff"></i>Programas</span><span><i style="--c:#f5b83d"></i>Caja</span><span><i style="--c:#7cc4ff"></i>Pagos</span>
+          </div>
+          <div class="main">
+            <div class="big sm">Miembros</div>
+            <div class="row"><span class="av">AR</span><span class="ln"><i style="--w:70%"></i><i style="--w:45%"></i></span><span class="tag">Vino por Go-Gyms</span></div>
+            <div class="row"><span class="av">LS</span><span class="ln"><i style="--w:55%"></i><i style="--w:60%"></i></span></div>
+            <div class="row"><span class="av">DT</span><span class="ln"><i style="--w:80%"></i><i style="--w:35%"></i></span><span class="tag">Vino por Go-Gyms</span></div>
+            <div class="row"><span class="av">PC</span><span class="ln"><i style="--w:62%"></i><i style="--w:50%"></i></span></div>
+            <div class="row"><span class="av">MJ</span><span class="ln"><i style="--w:48%"></i><i style="--w:66%"></i></span></div>
+          </div>
+        </div>
+        <!-- 11 · El vestidor de Gogo -->
+        <div class="scr s11" data-s="11">
+          <div class="sh"><span class="sh-k"><i></i>Vestidor de Gogo</span><span class="pill">4 de 9</span></div>
+          <div class="grid">
+            <span class="nw"><em>Nueva</em><svg viewBox="20 40 160 80"><path d="M28 92Q100 54 172 92" fill="none" stroke="#C9A8FF" stroke-width="12" stroke-linecap="round"/><path d="M28 92Q100 54 172 92" fill="none" stroke="#7CC4FF" stroke-width="2"/></svg></span>
+            <span><svg viewBox="40 36 160 70"><path d="M50 88Q52 50 100 48Q148 50 150 88Q100 74 50 88Z" fill="#33307a"/><path d="M50 88Q100 74 150 88" fill="none" stroke="#C9A8FF" stroke-width="2.2"/><path d="M128 84Q166 74 188 90Q160 97 130 92Z" fill="#26235c" stroke="#C9A8FF" stroke-opacity=".4"/><circle cx="100" cy="49" r="4" fill="#C9A8FF"/></svg></span>
+            <span><svg viewBox="0 0 100 100"><path d="M22 30L40 20Q50 30 60 20L78 30L88 46L74 52V84H26V52L12 46Z" fill="#0d0b14" stroke="rgb(255 255 255 / .25)" stroke-width="1.5" stroke-linejoin="round"/><text x="50" y="66" text-anchor="middle" font-family="Barlow Condensed" font-weight="900" font-size="15" fill="#F5B83D">TU GYM</text></svg></span>
+            <span><svg viewBox="78 140 44 44"><path d="M82 146L97 162" stroke="#9B5DE5" stroke-width="5" stroke-linecap="round"/><path d="M118 146L103 162" stroke="#C9A8FF" stroke-width="5" stroke-linecap="round"/><circle cx="100" cy="168" r="11" fill="#1c1538" stroke="#F5B83D" stroke-width="2.6"/></svg></span>
+            <span class="q">?</span><span class="q">?</span><span class="q">?</span><span class="q">?</span><span class="q">?</span>
+          </div>
+          <span class="mut" style="text-align:center">Las piezas se ganan entrenando</span>
+        </div>
+      </div>
+    </div>
+    <div class="holo-edge"></div>
+    <div class="holo-beam"></div>
+  </div>
+
+  <div id="gogoWrap">
+  <svg id="gogo" viewBox="-100 -140 400 360" width="400" height="360">
+    <defs>
+      <radialGradient id="gb" cx=".36" cy=".26" r=".85"><stop offset="0" stop-color="#5d43a6"/><stop offset=".5" stop-color="#33265f"/><stop offset="1" stop-color="#1c1538"/></radialGradient>
+      <radialGradient id="gkey" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffe7c2" stop-opacity=".55"/><stop offset="1" stop-color="#ffe7c2" stop-opacity="0"/></radialGradient>
+      <radialGradient id="gdoor" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff0d2" stop-opacity=".75"/><stop offset="1" stop-color="#fff0d2" stop-opacity="0"/></radialGradient>
+      <radialGradient id="gbounce" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#c9a8ff" stop-opacity=".35"/><stop offset="1" stop-color="#c9a8ff" stop-opacity="0"/></radialGradient>
+      <linearGradient id="cupG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD98A"/><stop offset=".5" stop-color="#F5B83D"/><stop offset="1" stop-color="#C98A1C"/></linearGradient>
+      <g id="cup"><path d="M14 6H50V22C50 36 42 44 32 44C22 44 14 36 14 22Z" fill="url(#cupG)"/><path d="M14 12H6V18C6 26 12 30 16 30M50 12H58V18C58 26 52 30 48 30" fill="none" stroke="url(#cupG)" stroke-width="4"/><path d="M28 44H36V56H28Z" fill="#C98A1C"/><path d="M18 56H46L48 66H16Z" fill="url(#cupG)"/><rect x="12" y="66" width="40" height="10" rx="2" fill="#3a2d5c"/><path d="M22 12V26" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/></g>
+      <clipPath id="cbody"><path d="M100 60C142 60 166 90 166 126C166 160 140 182 100 182C60 182 34 160 34 126C34 90 58 60 100 60Z"/></clipPath>
+      <clipPath id="cmouth"><path id="mclip" d="M0 0"/></clipPath>
+      <clipPath id="ceL"><circle cx="78" cy="106" r="15.8"/></clipPath><clipPath id="ceR"><circle cx="122" cy="106" r="15.8"/></clipPath>
+    </defs>
+    <g id="root">
+      <g id="feetB"><ellipse id="fL" rx="15" ry="8.5" fill="#291e4a" stroke="#9a7ee0" stroke-opacity=".45" stroke-width="1.2"/><ellipse id="fR" rx="15" ry="8.5" fill="#291e4a" stroke="#9a7ee0" stroke-opacity=".45" stroke-width="1.2"/></g>
+      <path id="ropeB" fill="none" stroke="#F5B83D" stroke-width="3.2" stroke-linecap="round"/>
+      <g id="armsB">
+        <path id="aLo" stroke="#9a7ee0" stroke-opacity=".5" stroke-width="15.5" stroke-linecap="round" fill="none"/><path id="aLi" stroke="#3b2c6b" stroke-width="12.5" stroke-linecap="round" fill="none"/>
+        <path id="aRo" stroke="#9a7ee0" stroke-opacity=".5" stroke-width="15.5" stroke-linecap="round" fill="none"/><path id="aRi" stroke="#3b2c6b" stroke-width="12.5" stroke-linecap="round" fill="none"/>
+      </g>
+      <g id="sq">
+        <path d="M100 60C142 60 166 90 166 126C166 160 140 182 100 182C60 182 34 160 34 126C34 90 58 60 100 60Z" fill="url(#gb)" stroke="#9a7ee0" stroke-opacity=".45" stroke-width="1.5"/>
+        <g clip-path="url(#cbody)">
+          <g id="tee" opacity="0">
+            <path d="M20 124L74 129Q100 160 126 129L180 124V200H20Z" fill="#0d0b14"/>
+            <path d="M74 129Q100 160 126 129" fill="none" stroke="rgb(255 255 255 / .22)" stroke-width="2.5"/>
+            <path d="M20 124L74 129Q100 160 126 129L180 124" fill="none" stroke="rgb(0 0 0 / .25)" stroke-width="1.5"/>
+            <path d="M40 182Q100 150 160 182" fill="none" stroke="rgb(255 255 255 / .06)" stroke-width="16"/>
+            <text x="100" y="175" text-anchor="middle" font-family="Barlow Condensed" font-weight="900" font-size="15" letter-spacing=".5" fill="#F5B83D">TU GYM</text>
+          </g>
+          <ellipse id="hl" cx="70" cy="82" rx="17" ry="7.5" fill="#fff" opacity=".15" transform="rotate(-30 70 82)"/>
+          <path d="M70 174Q100 183 130 174" stroke="#7CC4FF" stroke-opacity=".12" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse id="key" cx="96" cy="58" rx="86" ry="62" fill="url(#gkey)"/>
+          <ellipse id="doorRim" cx="20" cy="100" rx="70" ry="90" fill="url(#gdoor)" opacity="0"/>
+          <ellipse id="bounce" cx="100" cy="196" rx="80" ry="34" fill="url(#gbounce)"/>
+          <rect id="shade" x="20" y="50" width="160" height="140" fill="#05040b" opacity=".85"/>
+          <g id="bandIn" opacity="0"><path d="M28 92Q100 54 172 92" fill="none" stroke="#C9A8FF" stroke-width="12"/><path d="M28 92Q100 54 172 92" fill="none" stroke="#7CC4FF" stroke-width="2" opacity=".9"/></g>
+        </g>
+        <path id="bandKnot" d="M162 80L178 72M163 84L176 92" stroke="#C9A8FF" stroke-width="6" stroke-linecap="round" opacity="0"/>
+        <g id="cheeks"><ellipse cx="58" cy="134" rx="9" ry="5" fill="#ff8fb1"/><ellipse cx="142" cy="134" rx="9" ry="5" fill="#ff8fb1"/></g>
+        <g id="face">
+          <g id="brows" fill="none" stroke="#C9A8FF" stroke-width="4.5" stroke-linecap="round" opacity="0"><path id="browL" d="M65 79Q77 75 89 78"/><path id="browR" d="M111 78Q123 75 135 79"/></g>
+          <g id="eyeL"><g id="sclL"><circle cx="78" cy="106" r="15.8" fill="#F4F2FF"/><g id="pupL"><circle cx="78" cy="107" r="8.6" fill="#0e0b1a"/><circle cx="81.3" cy="103.4" r="2.9" fill="#fff"/><circle cx="75.4" cy="110.6" r="1.3" fill="#fff" opacity=".75"/></g><g clip-path="url(#ceL)"><g id="lidL" transform="translate(0 -26)"><rect x="60" y="62" width="36" height="44" fill="#3a2b6a"/><path d="M60 106Q78 108.5 96 106" stroke="#1a1430" stroke-width="2.4" fill="none"/></g></g></g><path id="ringL" fill="none" stroke="#9B5DE5" stroke-width="7" stroke-linecap="round" pathLength="360"/></g>
+          <g id="eyeR"><g id="sclR"><circle cx="122" cy="106" r="15.8" fill="#F4F2FF"/><g id="pupR"><circle cx="122" cy="107" r="8.6" fill="#0e0b1a"/><circle cx="125.3" cy="103.4" r="2.9" fill="#fff"/><circle cx="119.4" cy="110.6" r="1.3" fill="#fff" opacity=".75"/></g><g clip-path="url(#ceR)"><g id="lidR" transform="translate(0 -26)"><rect x="104" y="62" width="36" height="44" fill="#3a2b6a"/><path d="M104 106Q122 108.5 140 106" stroke="#1a1430" stroke-width="2.4" fill="none"/></g></g></g><path id="ringR" fill="none" stroke="#3DD6CB" stroke-width="7" stroke-linecap="round" pathLength="360"/></g>
+          <path id="hapL" d="M66 110Q78 95 90 110" stroke="#9B5DE5" stroke-width="7" stroke-linecap="round" fill="none" opacity="0"/>
+          <path id="hapR" d="M110 110Q122 95 134 110" stroke="#3DD6CB" stroke-width="7" stroke-linecap="round" fill="none" opacity="0"/>
+          <path id="sqL" d="M67 97.5L86.5 106L67 114.5" stroke="#9B5DE5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0"/>
+          <path id="sqR" d="M133 97.5L113.5 106L133 114.5" stroke="#3DD6CB" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0"/>
+          <g><path id="mouth" stroke="#F53756" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path id="mIn" fill="#3d0d22"/><ellipse id="tongue" cx="100" cy="146" rx="8" ry="4.5" fill="#ff7d96" clip-path="url(#cmouth)" opacity="0"/></g>
+        </g>
+        <path id="sweat" d="M0 -6C2.5 -2 4 1 4 3A4 4 0 0 1 -4 3C-4 1 -2.5 -2 0 -6Z" fill="#7CC4FF" opacity="0"/>
+      </g>
+      <g id="feetF"></g>
+      <g id="bar" opacity="0">
+        <path d="M2 0H198" stroke="#cfc8ea" stroke-width="4" stroke-linecap="round"/>
+        <g id="plates"></g>
+      </g>
+      <g id="armsF"></g>
+      <g id="hands">
+        <g><circle id="hL" r="6" fill="#4a3884" stroke="#b89cf0" stroke-opacity=".7" stroke-width="1.6"/><path id="fgL" stroke="#2c2152" stroke-width="2" stroke-linecap="round" fill="none"/></g>
+        <g><circle id="hR" r="6" fill="#4a3884" stroke="#b89cf0" stroke-opacity=".7" stroke-width="1.6"/><path id="fgR" stroke="#2c2152" stroke-width="2" stroke-linecap="round" fill="none"/></g>
+      </g>
+      <g id="dbL" opacity="0"><path d="M-10 0H10" stroke="#cfc8ea" stroke-width="3.2" stroke-linecap="round"/><rect x="-15" y="-9" width="6.5" height="18" rx="2.2" fill="#2a2442" stroke="#7CC4FF" stroke-opacity=".75" stroke-width="1.3"/><rect x="8.5" y="-9" width="6.5" height="18" rx="2.2" fill="#2a2442" stroke="#7CC4FF" stroke-opacity=".75" stroke-width="1.3"/></g>
+      <g id="dbR" opacity="0"><path d="M-10 0H10" stroke="#cfc8ea" stroke-width="3.2" stroke-linecap="round"/><rect x="-15" y="-9" width="6.5" height="18" rx="2.2" fill="#2a2442" stroke="#7CC4FF" stroke-opacity=".75" stroke-width="1.3"/><rect x="8.5" y="-9" width="6.5" height="18" rx="2.2" fill="#2a2442" stroke="#7CC4FF" stroke-opacity=".75" stroke-width="1.3"/></g>
+      <g id="rhL" opacity="0"><rect x="-3.6" y="-3.6" width="7.2" height="7.2" rx="2.4" fill="#C9A8FF"/></g>
+      <g id="rhR" opacity="0"><rect x="-3.6" y="-3.6" width="7.2" height="7.2" rx="2.4" fill="#C9A8FF"/></g>
+      <path id="ropeF" fill="none" stroke="#F5B83D" stroke-width="3.2" stroke-linecap="round"/>
+    </g>
+    <g id="bandFall" opacity="0"><path d="M-72 18Q0 -20 72 18" fill="none" stroke="#C9A8FF" stroke-width="12" stroke-linecap="round"/><path d="M-72 18Q0 -20 72 18" fill="none" stroke="#7CC4FF" stroke-width="2" opacity=".9"/><path d="M62 6L78 -2M63 10L76 18" stroke="#C9A8FF" stroke-width="6" stroke-linecap="round"/></g>
+  </svg>
+  </div>
+  <canvas id="front"></canvas>
+  <div id="probe"></div>
+</div>
+<button id="gogoHit" type="button" tabindex="-1" aria-hidden="true"></button>
+<div id="bubble" aria-hidden="true"></div>
+
+<header class="top">
+  <a class="brand" href="#c0" aria-label="Go-Gyms, volver al inicio">
+    <svg viewBox="11 9 98 62" fill="none" stroke-linecap="round" stroke-width="10" aria-hidden="true"><path d="M46.51 14.4A26 26 0 1 0 68 40" stroke="#9B5DE5"/><path d="M73.49 65.6A26 26 0 1 0 52 40" stroke="#3DD6CB"/><path d="M42 40H78" stroke="#F53756"/></svg>
+    <b>Go<span>-</span>Gyms</b>
+  </a>
+  <p class="count" id="count" aria-hidden="true">Muy pronto</p>
+</header>
+
+
+<main id="contenido">
+  <section class="ch on" id="c0" data-ch="0" aria-labelledby="t0" tabindex="-1">
+    <div class="ch-in">
+      <p class="kick">Prendiendo las luces</p>
+      <h1 id="t0" class="d">Algo grande se está calentando</h1>
+      <p class="desc"><b>Go-Gyms</b> es la app para la gente que entrena y para los gyms. Todavía no abrimos, pero Gogo, nuestra mascota, ya está adentro y te quiere mostrar un adelanto.</p>
+      <p class="sr-only" data-gogo>Gogo dice: ¡Hola! Ya prendí todo. ¿Te muestro lo que viene?</p>
+      <div class="acts"><a class="next" href="#c1">Hacer el recorrido <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a><span class="hint">11 paradas · deslizá<span class="kb"> o usá las flechas del teclado</span></span></div>
+    </div>
+  </section>
+
+  <section class="ch" id="c1" data-ch="1" aria-labelledby="t1" tabindex="-1">
+    <div class="ch-in">
+      <p class="kick"><span>01</span> Qué es</p>
+      <h2 id="t1" class="d">Una cuenta para todos tus gyms</h2>
+      <p class="desc">Tu perfil fitness va con vos de gym en gym: tus entrenos, tus récords y tu constancia no quedan atados a un solo lugar. Y si viajás, entrás a otros gyms de Go-Gyms con un pase del día.</p>
+      <p class="sr-only" data-gogo>Gogo dice: ¡Soy Gogo! Y voy con vos a cada gym.</p>
+      <div class="acts"><a class="next" href="#c2">Seguir: Entrar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></div>
+    </div>
+  </section>
+
+  <section class="ch" id="c2" data-ch="2" aria-labelledby="t2" tabindex="-1">
+    <div class="ch-in">
+      <p class="kick"><span>02</span> Entrar al gym</p>
+      <h2 id="t2" class="d">Un pase que nadie puede copiar</h2>
+      <p class="desc">Entrás con un QR que cambia cada 30 segundos, así que una captura de pantalla no sirve. Y antes de salir ves cuánta gente hay en el gym: <b>tranquilo</b>, <b>movido</b> o <b>lleno</b>.</p>
+      <p class="sr-only" data-gogo>Gogo dice: ¡Mirá cómo cambia! Este pase es solo tuyo.</p>
+      <div class="acts"><a class="next" href="#c3">Seguir: Entrenar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></div>
+    </div>
+  </section>
+
+  <section class="ch" id="c3" data-ch="3" aria-labelledby="t3" tabindex="-1">
+    <div class="ch-in">
+      <p class="kick"><span>03</span> Entrenar</p>
+      <h2 id="t3" class="d">Serie por serie, a tu manera</h2>
+      <p class="desc">Seguí el programa de tu coach o armá el tuyo. Marcás cada serie, la app te sugiere cuándo subirle el peso a la barra y vos decidís. El cardio, al principio o al final.</p>
+      <p class="sr-only">Gogo dice: Una… dos… ¡estas pesitas me encantan!</p>
+      <div class="acts"><a class="next" href="#c4">Seguir: Récords <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></div>
+    </div>
+  </section>
+
+  <section class="ch" id="c4" data-ch="4" aria-labelledby="t4" tabindex="-1">
+    <div class="ch-in">
+      <p class="kick"><span>04</span> Récords y vitrina</p>
+      <h2 id="t4" class="d">Cada récord se festeja</h2>
+      <p class="desc">Cuando superás tu marca, Gogo salta con vos. El trofeo queda en tu vitrina con su historia: de dónde venías y cómo llegaste.</p>
+      <p class="sr-only">Gogo dice: ¡Récord nuevo! Directo a la vitrina.</p>
+      <div class="acts"><a class="next" href="#c5">Seguir: Metas <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></div>
+    </div>
+  </section>
+
+  <section class="ch" id="c5" data-ch="5" aria-labelledby="t5" tabindex="-1">
+    <div class="ch-in">
+      <p class="kick"><span>05</span> Metas</p>
+      <h2 id="t5" class="d">Te dice la verdad</h2>
+      <p class="desc">Ponés una meta y, con lo que venís entrenando, te muestra si llegás y para cuándo. Si no llegás, también te lo dice. Sirve para metas de tiempo, como correr 5 km más rápido.</p>
+      <p class="sr-only" data-gogo>Gogo dice: Nada de promesas mágicas: solo lo que vos hacés.</p>
+      <div class="acts"><a class="next" href="#c6">Seguir: Tu semana <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></div>
+    </div>
+  </section>
+
+  <section class="ch" id="c6" data-ch="6" aria-labelledby="t6" tabindex="-1">
+    <div class="ch-in">
+      <p class="kick"><span>06</span> Tu semana</p>
+      <h2 id="t6" class="d">Constancia que se ve</h2>
+      <p class="desc">Tu racha, cuántos días querés entrenar por semana y tu año entero como un cielo: cada semana cumplida es una estrella.</p>
+      <p class="sr-only" data-gogo>Gogo dice: ¡Otra semana cumplida! Mirá cómo brilla tu año.</p>
+      <div class="acts"><a class="next" href="#c7">Seguir: Clases <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></div>
+    </div>
+  </section>
+
+  <section class="ch" id="c7" data-ch="7" aria-labelledby="t7" tabindex="-1">
+    <div class="ch-in">
+      <p class="kick"><span>07</span> Clases y reservas</p>
+      <h2 id="t7" class="d">Tu lugar en la clase</h2>
+      <p class="desc">Reservás desde el teléfono. ¿Se llenó? Te anotás en la lista de espera y, si alguien cancela, la fila avanza sola.</p>
+      <p class="sr-only">Gogo dice: ¡Te guardé el lugar de al lado!</p>
+      <div class="acts"><a class="next" href="#c8">Seguir: Comunidad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></div>
+    </div>
+  </section>
+
+  <section class="ch" id="c8" data-ch="8" aria-labelledby="t8" tabindex="-1">
+    <div class="ch-in">
+      <p class="kick"><span>08</span> Comunidad</p>
+      <h2 id="t8" class="d">Tu gente, también en la app</h2>
+      <p class="desc">Historias de tu gym, un toque para darle fuerza a lo que publican los demás, encuestas para elegir la próxima clase y eventos con otros gyms, como una carrera de 5K.</p>
+      <p class="sr-only">Gogo dice: ¡Chocala! Esto es en equipo.</p>
+      <div class="acts"><a class="next" href="#c9">Seguir: Profesionales <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></div>
+    </div>
+  </section>
+
+  <section class="ch" id="c9" data-ch="9" aria-labelledby="t9" tabindex="-1">
+    <div class="ch-in">
+      <p class="kick"><span>09</span> Profesionales</p>
+      <h2 id="t9" class="d">Tu equipo, del gym o de afuera</h2>
+      <p class="desc">Coach, nutricionista y fisioterapeuta trabajando con vos, y tus mediciones del cuerpo en un solo lugar. ¿Cómo se ve? Eso todavía es secreto.</p>
+      <p class="sr-only" data-gogo>Gogo dice: Uy… esto todavía no te lo puedo mostrar. Bueno… solo un poquito. ¡No le cuentes a nadie!</p>
+      <div class="acts"><a class="next" href="#c10">Seguir: Para los gyms <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></div>
+    </div>
+  </section>
+
+  <section class="ch" id="c10" data-ch="10" aria-labelledby="t10" tabindex="-1">
+    <div class="ch-in">
+      <p class="kick"><span>10</span> Para los gyms</p>
+      <h2 id="t10" class="d">Tu gym, en un solo lugar</h2>
+      <p class="desc">Miembros, clases, programas, pagos y la caja del día en un solo lugar, y ves quién llegó a tu gym gracias a Go-Gyms.</p>
+      <p class="sr-only" data-gogo>Gogo dice: ¡Alto! Esto es para los gyms. Si tenés uno… te va a encantar.</p>
+      <div class="acts"><a class="next" href="#c11">Seguir: Gogo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></div>
+    </div>
+  </section>
+
+  <section class="ch" id="c11" data-ch="11" aria-labelledby="t11" tabindex="-1">
+    <div class="ch-in">
+      <p class="kick"><span>11</span> Gogo</p>
+      <h2 id="t11" class="d">Tu compa de entreno</h2>
+      <p class="desc">Gogo te acompaña. Si dejás de ir, se cansa un poco; con tu próximo entreno vuelve a saltar. Se viste con piezas que vas ganando y con la remera de tu gym.</p>
+      <p class="sr-only" data-gogo>Gogo dice: Uf… si no entrenamos, me canso un poco. ¡Pieza nueva! Y la remera de tu gym. ¡A entrenar! Hay piezas que ni yo vi todavía.</p>
+      <div class="acts"><a class="next" href="#c12">Seguir: La puerta <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></div>
+    </div>
+  </section>
+
+  <section class="ch fin" id="c12" data-ch="12" aria-labelledby="t12" tabindex="-1">
+    <div class="ch-in">
+      <svg class="neon" viewBox="11 9 98 62" fill="none" stroke-linecap="round" stroke-width="10" aria-hidden="true" style="filter:drop-shadow(0 0 6px rgb(166 107 240 / .85)) drop-shadow(0 0 16px rgb(166 107 240 / .45))">
+        <circle class="lk-glow" cx="60" cy="40" r="34" stroke="#a66bf0" stroke-width="2"/>
+        <g class="lk-lock">
+          <g class="lk-l"><path d="M46.51 14.4A26 26 0 1 0 68 40" stroke="#a66bf0"/><path d="M46.51 14.4A26 26 0 1 0 68 40" stroke="rgb(255 248 255 / .85)" stroke-width="2.6"/></g>
+          <g class="lk-r"><path d="M73.49 65.6A26 26 0 1 0 52 40" stroke="#cdb0ff"/><path d="M73.49 65.6A26 26 0 1 0 52 40" stroke="rgb(255 248 255 / .85)" stroke-width="2.6"/></g>
+          <g class="lk-bar"><path d="M42 40H78" stroke="#ff4a68"/><path d="M42 40H78" stroke="rgb(255 248 255 / .85)" stroke-width="2.6"/></g>
+        </g>
+      </svg>
+      <h2 id="t12" class="d">Muy pronto.</h2>
+      <p class="desc">Lo que viste es solo una parte. El resto está guardado, y Gogo no suelta la llave hasta que abramos.</p>
+      <p class="sr-only" data-gogo>Gogo dice: Shhh… lo mejor está detrás de esta puerta. Ya casi. ¡Volvé pronto!</p>
+      <div class="warm" aria-hidden="true"><div class="warm-h"><span>Calentando…</span></div><div class="warm-b"><i id="warmB"></i></div></div>
+      <div class="share"><p>¿Tu gym todavía no está? Pasale esta página.</p><button type="button" class="share-b" id="shareB"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Compartir</button><span class="share-ok" id="shareOk" role="status" aria-live="polite"></span></div>
+      <div class="acts"><a class="again" href="#c0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>Ver otra vez</a></div>
+    </div>
+    <p class="foot">© 2026 Go-Gyms</p>
+  </section>
+</main>
+<nav class="rail" aria-label="Paradas del recorrido">
+  <ol>
+    <li><a href="#c0" aria-current="step"><span>Inicio</span></a></li>
+    <li><a href="#c1"><span>Qué es</span></a></li>
+    <li><a href="#c2"><span>Entrar</span></a></li>
+    <li><a href="#c3"><span>Entrenar</span></a></li>
+    <li><a href="#c4"><span>Récords</span></a></li>
+    <li><a href="#c5"><span>Metas</span></a></li>
+    <li><a href="#c6"><span>Tu semana</span></a></li>
+    <li><a href="#c7"><span>Clases</span></a></li>
+    <li><a href="#c8"><span>Comunidad</span></a></li>
+    <li><a href="#c9"><span>Profesionales</span></a></li>
+    <li><a href="#c10"><span>Para los gyms</span></a></li>
+    <li><a href="#c11"><span>Gogo</span></a></li>
+    <li><a href="#c12"><span>La puerta</span></a></li>
+  </ol>
+</nav>
+
+<script src="/app.js" defer></script>
 </body>
 </html>
