@@ -533,7 +533,7 @@ const LINES = [
   ["Uy… esto todavía no te lo puedo mostrar.", "Bueno… solo un poquito.", "¡No le cuentes a nadie!"],
   ["¡Alto! Esto es para los gyms.", "Si tenés uno… te va a encantar."],
   ["Uf… si no entrenamos, me canso un poco.", "¡Pieza nueva!", "Y la remera de tu gym. ¡A entrenar!", "Hay piezas que ni yo vi todavía."],
-  ["Shhh… lo mejor está detrás de esta puerta.", "Ya casi. ¡Volvé pronto!"],
+  ["Shhh… lo mejor está del otro lado de esta puerta.", "Ya casi. ¡Volvé pronto!"],
 ];
 // Si ya vino antes (solo una marca en este navegador, nada personal), Gogo lo saluda distinto.
 let back = false;
