@@ -137,7 +137,7 @@ const plateY = [0, 1, 2].map(() => new Spr(0, 300, 13));
 const cam = { x: new Spr(0, 26, 10.5), y: new Spr(0, 26, 10.5), z: new Spr(0, 26, 10.5) };
 const par = { x: new Spr(0, 30, 11), y: new Spr(0, 30, 11) };
 
-const S = { cur: 0, introDone: false, covering: false, peek: false, pointer: null, pointerT: -1e9, look: null, glance: 0, arrived: false };
+const S = { cur: 0, beamA: 0, introDone: false, covering: false, peek: false, pointer: null, pointerT: -1e9, look: null, glance: 0, arrived: false };
 
 // Tweens del mundo (luces, puerta, prendas): con movimiento reducido, directo al final.
 const tweens = {};
@@ -812,6 +812,8 @@ function frame(now) {
     if (S.peek) { P.hRx = ex(136); P.hRy = ey + 26; P.hRr = 12; } else { P.hRx = ex(122); P.hRy = ey; P.hRr = 19.5; }
     P.frontR = 1; P.blush = .75;
   }
+  // Las manos nunca entran en la pantalla holográfica (salvo en la 10, donde Gogo se para delante a propósito).
+  if (holoOn && S.cur !== 10 && !moving) keepHandsOut(P);
   // 3. A dónde mira: el puntero, la pantalla que muestra o curiosea
   let target = null;
   if (S.pointer && now - S.pointerT < 2500) target = S.pointer;
@@ -857,6 +859,24 @@ function frame(now) {
   }
   if (RM) { quiet++; if (quiet > 40) return; }
   raf = requestAnimationFrame(frame);
+}
+
+// Si una mano cae dentro de la pantalla (con margen), vuelve por la línea del hombro hasta el borde.
+function keepHandsOut(P) {
+  const px = RM ? 0 : -par.x.x * 10, py = RM ? 0 : -par.y.x * 6;
+  for (const k of ["L", "R"]) {
+    // Margen: la mano, su vaivén al saludar y lo que el resorte del brazo se pasa al llegar.
+    const m = 8 + (Math.max(8.5, P["h" + k + "r"]) + (k === "R" ? 9 * P.wave : 0) + 6) * gS;
+    const x0 = holoR.x + px - m, x1 = holoR.x + holoR.w + px + m, y0 = holoR.y + py - m, y1 = holoR.y + holoR.h + py + m;
+    const inside = (q) => q[0] > x0 && q[0] < x1 && q[1] > y0 && q[1] < y1;
+    const onHolo = (q) => q[0] > x0 + m && q[0] < x1 - m && q[1] > y0 + m && q[1] < y1 - m;
+    const sx = k === "L" ? 40 : 160, sy = 126, hx = P["h" + k + "x"], hy = P["h" + k + "y"];
+    // (Si el hombro mismo está sobre la pantalla, Gogo está delante: no hay nada que recortar.)
+    if (!inside(toScreen(hx, hy)) || onHolo(toScreen(sx, sy))) continue;
+    let lo = 0, hi = 1;
+    for (let n = 0; n < 12; n++) { const mid = (lo + hi) / 2; if (inside(toScreen(lerp(sx, hx, mid), lerp(sy, hy, mid)))) hi = mid; else lo = mid; }
+    P["h" + k + "x"] = lerp(sx, hx, lo); P["h" + k + "y"] = lerp(sy, hy, lo);
+  }
 }
 
 function beamTarget(now, moving) {
@@ -943,6 +963,17 @@ function render(t, sxx, syy, fLy, fRy, P, FDT) {
   // Brazos: del hombro (que se aplasta con el cuerpo) a la mano
   const H = { L: [sp.hLx.x, sp.hLy.x, sp.hLr.x], R: [sp.hRx.x, sp.hRy.x, sp.hRr.x] };
   if (P.wave > .01 && !RM) { H.R[0] += Math.sin(t * 15) * 9 * P.wave; H.R[1] += Math.cos(t * 15) * 3 * P.wave; }
+  // Lo dibujado tampoco entra en la pantalla (el resorte del brazo puede pasarse del objetivo).
+  if (holoOn && S.cur !== 10) for (const k of ["L", "R"]) {
+    const r = Math.max(8.5, H[k][2]) * gS + 4, px = RM ? 0 : -par.x.x * 10, py = RM ? 0 : -par.y.x * 6;
+    const inside = (q) => q[0] > holoR.x + px - r && q[0] < holoR.x + holoR.w + px + r && q[1] > holoR.y + py - r && q[1] < holoR.y + holoR.h + py + r;
+    const sx = k === "L" ? 40 : 160, sy = 126;
+    if (!inside(toScreen(H[k][0], H[k][1])) || inside(toScreen(sx, sy))) continue;
+    let lo = 0, hi = 1;
+    for (let n = 0; n < 12; n++) { const mid = (lo + hi) / 2; if (inside(toScreen(lerp(sx, H[k][0], mid), lerp(sy, H[k][1], mid)))) hi = mid; else lo = mid; }
+    H[k][0] = lerp(sx, H[k][0], lo); H[k][1] = lerp(sy, H[k][1], lo);
+  }
+  S.handR = [H.R[0], H.R[1]]; // de acá sale la línea de luz
   const sh = { L: sqPt(40, 126), R: sqPt(160, 126) };
   for (const k of ["L", "R"]) {
     const [hx2, hy2, hr2] = H[k], [ax, ay] = sh[k];
@@ -1218,18 +1249,20 @@ function world(now, t, dt, gdt) {
   if (W.flash > .01) { bloom(f, W.flashX, W.flashY, 260 * gS / 2, [255, 248, 230], W.flash); W.flash = Math.max(0, W.flash - dt * 4); }
   // La línea de luz: de la mano de Gogo a lo que destaca en la pantalla, y un marco que lo resalta.
   if (S.beamA > .01 && S.beamRect) {
-    const r = S.beamRect, a = S.beamA, [hx, hy] = toScreen(sp.hRx.x, sp.hRy.x);
-    const ex = clamp(hx, r.left - 6, r.right + 6), ey = clamp(hy, r.top - 6, r.bottom + 6);
+    const r = S.beamRect, a = S.beamA, [hx, hy] = toScreen(...(S.handR || [sp.hRx.x, sp.hRy.x]));
+    // La línea llega hasta el borde de la pantalla (nunca la cruza ni tapa nada); adentro, el recuadro marca lo que muestra.
+    const hb = holo.getBoundingClientRect(), ex = clamp(clamp(hx, r.left, r.right), hb.left, hb.right), ey = clamp(clamp(hy, r.top, r.bottom), hb.top, hb.bottom);
+    const ex2 = hx < hb.left ? hb.left : hx > hb.right ? hb.right : ex, ey2 = hy > hb.bottom ? hb.bottom : hy < hb.top ? hb.top : ey;
     f.save(); f.globalCompositeOperation = "lighter"; f.lineCap = "round";
     f.strokeStyle = `rgba(124,196,255,${(.14 * a).toFixed(3)})`; f.lineWidth = 9 * D;
-    f.beginPath(); f.moveTo(hx * D, hy * D); f.lineTo(ex * D, ey * D); f.stroke();
-    const g = f.createLinearGradient(hx * D, hy * D, ex * D, ey * D); g.addColorStop(0, `rgba(200,232,255,${(.95 * a).toFixed(3)})`); g.addColorStop(1, `rgba(124,196,255,${(.6 * a).toFixed(3)})`);
+    f.beginPath(); f.moveTo(hx * D, hy * D); f.lineTo(ex2 * D, ey2 * D); f.stroke();
+    const g = f.createLinearGradient(hx * D, hy * D, ex2 * D, ey2 * D); g.addColorStop(0, `rgba(200,232,255,${(.95 * a).toFixed(3)})`); g.addColorStop(1, `rgba(124,196,255,${(.6 * a).toFixed(3)})`);
     f.strokeStyle = g; f.lineWidth = 2.4 * D; if (!RM) { f.setLineDash([12 * D, 7 * D]); f.lineDashOffset = -t * 70 * D; }
-    f.beginPath(); f.moveTo(hx * D, hy * D); f.lineTo(ex * D, ey * D); f.stroke(); f.setLineDash([]);
+    f.beginPath(); f.moveTo(hx * D, hy * D); f.lineTo(ex2 * D, ey2 * D); f.stroke(); f.setLineDash([]);
     f.strokeStyle = `rgba(124,196,255,${(.85 * a).toFixed(3)})`; f.lineWidth = 2 * D; f.fillStyle = `rgba(124,196,255,${(.07 * a).toFixed(3)})`;
     f.beginPath(); f.roundRect((r.left - 6) * D, (r.top - 6) * D, (r.width + 12) * D, (r.height + 12) * D, 12 * D); f.fill(); f.stroke();
     f.restore();
-    bloom(f, hx, hy, 26 * gS / 2.2, [124, 196, 255], .5 * a);
+    bloom(f, hx, hy, 26 * gS / 2.2, [124, 196, 255], .5 * a); bloom(f, ex2, ey2, 22, [160, 214, 255], .7 * a);
   }
   // Viñeta y grano
   f.globalAlpha = 1; f.drawImage(vign, 0, 0, cvF.width, cvF.height);
