@@ -1364,7 +1364,7 @@ function bubbleAt() {
   bub.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
 }
 
-// "Calentando…": la barra se acerca al final, late y nunca llega.
+// "Preparando todo…": la barra se acerca al final, late y nunca llega.
 const warmB = $("warmB");
 let warmT = 0;
 function warm(dt) {
