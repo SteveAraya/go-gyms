@@ -17,9 +17,11 @@ python3 -m http.server 4173
 
 y abrir http://localhost:4173.
 
-## Versión de `app.js`
+## Versión de `app.js` y de los íconos
 
-`index.html` carga `app.js?v=<hash>`: así los navegadores que ya lo tenían guardado bajan el nuevo. La versión la
+`index.html` carga `app.js`, `favicon.svg`, `favicon.ico` y `apple-touch-icon.png` con `?v=<hash>` de cada uno: así
+los navegadores que ya los tenían guardados bajan los nuevos (los íconos van a un caché aparte que no se renueva
+solo, aunque el servidor diga `max-age=0`). La versión la
 pone `scripts/version.sh`. Para que corra solo antes de cada commit, instalá el hook una vez:
 
 ```sh
