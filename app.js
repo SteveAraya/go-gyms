@@ -131,7 +131,9 @@ const WALL = 900;
 const LAMPS = [{ x: 0, y: -262, z: 396 }, { x: 430, y: -380, z: 690 }, { x: -470, y: -380, z: 700 }];
 const DOOR = { x0: -330, x1: -190, y0: -262 };
 const WINS = [[-860, -520], [300, 700]], WIN_Y = [-610, -380];
-const cord = { y: new Spr(-206, 260, 7), x: new Spr(-50, 260, 9) };
+// El cordón cuelga del lado de la mano con que Gogo lo jala (la derecha, hRx).
+const CORD_X = 50;
+const cord = { y: new Spr(-206, 260, 7), x: new Spr(CORD_X, 260, 9) };
 const rope = { a: new Spr(0, 30, 2.2) };
 const plateY = [0, 1, 2].map(() => new Spr(0, 300, 13));
 const cam = { x: new Spr(0, 26, 10.5), y: new Spr(0, 26, 10.5), z: new Spr(0, 26, 10.5) };
@@ -1218,11 +1220,11 @@ function world(now, t, dt, gdt) {
   const behind = phone() && holoOn;
   lamp(behind ? c : f, 0);
   {
-    const L0 = LAMPS[0]; const [tx, ty, ts] = P3(L0.x - 50, L0.y + 4, L0.z);
+    const L0 = LAMPS[0]; const [tx, ty, ts] = P3(L0.x + CORD_X, L0.y + 4, L0.z);
     if (L0.z - camZ > 40) {
       let ex, ey;
-      if (W.cordGrab > .5) { const hand = toScreen(sp.hRx.x, sp.hRy.x - 6); ex = hand[0]; ey = hand[1]; const [, by0] = P3(0, -206, L0.z); cord.y.x = -206 + (ey - by0) / ts; cord.y.v = 0; cord.x.x = -50 + (ex - tx) / ts; }
-      else { cord.y.t = -206; cord.x.t = -50; cord.y.step(dt); cord.x.step(dt); const p = P3(L0.x + cord.x.x, cord.y.x, L0.z); ex = p[0]; ey = p[1]; }
+      if (W.cordGrab > .5) { const hand = toScreen(sp.hRx.x, sp.hRy.x - 6); ex = hand[0]; ey = hand[1]; const [, by0] = P3(0, -206, L0.z); cord.y.x = -206 + (ey - by0) / ts; cord.y.v = 0; cord.x.x = CORD_X + (ex - tx) / ts; }
+      else { cord.y.t = -206; cord.x.t = CORD_X; cord.y.step(dt); cord.x.step(dt); const p = P3(L0.x + cord.x.x, cord.y.x, L0.z); ex = p[0]; ey = p[1]; }
       const q = behind ? c : f;
       q.setTransform(D, 0, 0, D, 0, 0); q.strokeStyle = "#cfc6ee"; q.globalAlpha = .45 + .5 * clamp(W.lamp[0] + W.ambient * 2); q.lineWidth = Math.max(1, 1.4 * ts); q.beginPath(); q.moveTo(tx, ty); q.lineTo(ex, ey); q.stroke();
       q.fillStyle = GOLD; q.beginPath(); q.arc(ex, ey + 4 * ts, 5.5 * ts, 0, TAU); q.fill(); q.globalAlpha = 1;
